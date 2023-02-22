@@ -1,0 +1,14 @@
+{
+    "editor.tabSize": 2,
+    "editor.codeActionsOnSave": {
+        "source.organizeImports": true
+    },
+    "explorer.excludeGitIgnore": false,
+    "explorer.fileNesting.enabled": true,
+    "explorer.fileNesting.patterns": {
+        "package.json": ".eslintrc.yml, yarn.lock, .gitignore, app.config.js, babel.config.js, eas.json, tsconfig.json, metro.config.js, .eslintrc, jest.config.js, babel.config.cjs",
+        "*.js": "${capture}.lib.js, ${capture}.test.js, ${capture}.native.js",
+        "*.tsx": "${capture}.lib.ts, ${capture}.test.tsx, ${capture}.native.tsx",
+        "*.ts": "${capture}.lib.ts, ${capture}.test.ts, ${capture}.native.ts"
+    },
+}

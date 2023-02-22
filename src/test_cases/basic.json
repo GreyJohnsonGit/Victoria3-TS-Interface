@@ -1,0 +1,438 @@
+{
+  "raw": "STATE = {\n    id = 2\n    name = \"Two\"\n    ids = { 1 2 3 }\n    names = { \"One\" \"Two\" \"Three\" }\n  }",
+  "tokenized": [
+    {
+      "kind": "symbol",
+      "value": "#GLOBAL",
+      "context": {
+        "filepath": "test",
+        "line": 1,
+        "column": 0
+      }
+    },
+    {
+      "kind": "=",
+      "context": {
+        "filepath": "test",
+        "line": 1,
+        "column": 0
+      }
+    },
+    {
+      "kind": "{",
+      "context": {
+        "filepath": "test",
+        "line": 1,
+        "column": 0
+      }
+    },
+    {
+      "kind": "symbol",
+      "value": "STATE",
+      "context": {
+        "filepath": "test",
+        "line": 1,
+        "column": 0
+      }
+    },
+    {
+      "kind": "=",
+      "context": {
+        "filepath": "test",
+        "line": 1,
+        "column": 6
+      }
+    },
+    {
+      "kind": "{",
+      "context": {
+        "filepath": "test",
+        "line": 1,
+        "column": 8
+      }
+    },
+    {
+      "kind": "symbol",
+      "value": "id",
+      "context": {
+        "filepath": "test",
+        "line": 2,
+        "column": 4
+      }
+    },
+    {
+      "kind": "=",
+      "context": {
+        "filepath": "test",
+        "line": 2,
+        "column": 7
+      }
+    },
+    {
+      "kind": "number",
+      "value": 2,
+      "context": {
+        "filepath": "test",
+        "line": 2,
+        "column": 9
+      }
+    },
+    {
+      "kind": "symbol",
+      "value": "name",
+      "context": {
+        "filepath": "test",
+        "line": 3,
+        "column": 4
+      }
+    },
+    {
+      "kind": "=",
+      "context": {
+        "filepath": "test",
+        "line": 3,
+        "column": 9
+      }
+    },
+    {
+      "kind": "string",
+      "value": "Two",
+      "context": {
+        "filepath": "test",
+        "line": 3,
+        "column": 11
+      }
+    },
+    {
+      "kind": "symbol",
+      "value": "ids",
+      "context": {
+        "filepath": "test",
+        "line": 4,
+        "column": 4
+      }
+    },
+    {
+      "kind": "=",
+      "context": {
+        "filepath": "test",
+        "line": 4,
+        "column": 8
+      }
+    },
+    {
+      "kind": "{",
+      "context": {
+        "filepath": "test",
+        "line": 4,
+        "column": 10
+      }
+    },
+    {
+      "kind": "number",
+      "value": 1,
+      "context": {
+        "filepath": "test",
+        "line": 4,
+        "column": 12
+      }
+    },
+    {
+      "kind": "number",
+      "value": 2,
+      "context": {
+        "filepath": "test",
+        "line": 4,
+        "column": 14
+      }
+    },
+    {
+      "kind": "number",
+      "value": 3,
+      "context": {
+        "filepath": "test",
+        "line": 4,
+        "column": 16
+      }
+    },
+    {
+      "kind": "}",
+      "context": {
+        "filepath": "test",
+        "line": 4,
+        "column": 18
+      }
+    },
+    {
+      "kind": "symbol",
+      "value": "names",
+      "context": {
+        "filepath": "test",
+        "line": 5,
+        "column": 4
+      }
+    },
+    {
+      "kind": "=",
+      "context": {
+        "filepath": "test",
+        "line": 5,
+        "column": 10
+      }
+    },
+    {
+      "kind": "{",
+      "context": {
+        "filepath": "test",
+        "line": 5,
+        "column": 12
+      }
+    },
+    {
+      "kind": "string",
+      "value": "One",
+      "context": {
+        "filepath": "test",
+        "line": 5,
+        "column": 14
+      }
+    },
+    {
+      "kind": "string",
+      "value": "Two",
+      "context": {
+        "filepath": "test",
+        "line": 5,
+        "column": 20
+      }
+    },
+    {
+      "kind": "string",
+      "value": "Three",
+      "context": {
+        "filepath": "test",
+        "line": 5,
+        "column": 26
+      }
+    },
+    {
+      "kind": "}",
+      "context": {
+        "filepath": "test",
+        "line": 5,
+        "column": 34
+      }
+    },
+    {
+      "kind": "}",
+      "context": {
+        "filepath": "test",
+        "line": 6,
+        "column": 2
+      }
+    },
+    {
+      "kind": "}",
+      "context": {
+        "filepath": "test",
+        "line": 7,
+        "column": 0
+      }
+    }
+  ],
+  "parsed": {
+    "kind": "assignment",
+    "variable": {
+      "kind": "variable",
+      "name": "#GLOBAL",
+      "context": {
+        "filepath": "test",
+        "line": 1,
+        "column": 0
+      }
+    },
+    "expression": {
+      "kind": "array",
+      "value": [
+        {
+          "kind": "assignment",
+          "variable": {
+            "kind": "variable",
+            "name": "STATE",
+            "context": {
+              "filepath": "test",
+              "line": 1,
+              "column": 0
+            }
+          },
+          "expression": {
+            "kind": "array",
+            "value": [
+              {
+                "kind": "assignment",
+                "variable": {
+                  "kind": "variable",
+                  "name": "id",
+                  "context": {
+                    "filepath": "test",
+                    "line": 2,
+                    "column": 4
+                  }
+                },
+                "expression": {
+                  "kind": "number",
+                  "value": 2,
+                  "context": {
+                    "filepath": "test",
+                    "line": 2,
+                    "column": 9
+                  }
+                }
+              },
+              {
+                "kind": "assignment",
+                "variable": {
+                  "kind": "variable",
+                  "name": "name",
+                  "context": {
+                    "filepath": "test",
+                    "line": 3,
+                    "column": 4
+                  }
+                },
+                "expression": {
+                  "kind": "string",
+                  "value": "Two",
+                  "context": {
+                    "filepath": "test",
+                    "line": 3,
+                    "column": 11
+                  }
+                }
+              },
+              {
+                "kind": "assignment",
+                "variable": {
+                  "kind": "variable",
+                  "name": "ids",
+                  "context": {
+                    "filepath": "test",
+                    "line": 4,
+                    "column": 4
+                  }
+                },
+                "expression": {
+                  "kind": "array",
+                  "value": [
+                    {
+                      "kind": "number",
+                      "value": 1,
+                      "context": {
+                        "filepath": "test",
+                        "line": 4,
+                        "column": 12
+                      }
+                    },
+                    {
+                      "kind": "number",
+                      "value": 2,
+                      "context": {
+                        "filepath": "test",
+                        "line": 4,
+                        "column": 14
+                      }
+                    },
+                    {
+                      "kind": "number",
+                      "value": 3,
+                      "context": {
+                        "filepath": "test",
+                        "line": 4,
+                        "column": 16
+                      }
+                    }
+                  ],
+                  "context": {
+                    "filepath": "test",
+                    "line": 4,
+                    "column": 10
+                  }
+                }
+              },
+              {
+                "kind": "assignment",
+                "variable": {
+                  "kind": "variable",
+                  "name": "names",
+                  "context": {
+                    "filepath": "test",
+                    "line": 5,
+                    "column": 4
+                  }
+                },
+                "expression": {
+                  "kind": "array",
+                  "value": [
+                    {
+                      "kind": "string",
+                      "value": "One",
+                      "context": {
+                        "filepath": "test",
+                        "line": 5,
+                        "column": 14
+                      }
+                    },
+                    {
+                      "kind": "string",
+                      "value": "Two",
+                      "context": {
+                        "filepath": "test",
+                        "line": 5,
+                        "column": 20
+                      }
+                    },
+                    {
+                      "kind": "string",
+                      "value": "Three",
+                      "context": {
+                        "filepath": "test",
+                        "line": 5,
+                        "column": 26
+                      }
+                    }
+                  ],
+                  "context": {
+                    "filepath": "test",
+                    "line": 5,
+                    "column": 12
+                  }
+                }
+              }
+            ],
+            "context": {
+              "filepath": "test",
+              "line": 1,
+              "column": 8
+            }
+          }
+        }
+      ],
+      "context": {
+        "filepath": "test",
+        "line": 1,
+        "column": 0
+      }
+    }
+  },
+  "interpreted": [{
+    "id": 2,
+    "name": "Two",
+    "ids": [1, 2, 3],
+    "names": ["One", "Two", "Three"],
+    "context": {
+      "filepath": "test",
+      "line": 1,
+      "column": 0
+    }
+  }]
+}

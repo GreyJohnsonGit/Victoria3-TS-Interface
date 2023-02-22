@@ -1,0 +1,41 @@
+{
+  "name": "victoria3-ts-interface",
+  "version": "0.1.0",
+  "description": "Types, Serialization, and Deserialization for vic3 script files.",
+  "main": "index.js",
+  "scripts": {
+    "execute": "node ./build/index.js",
+    "build": "tsc -p tsconfig.json",
+    "clean": "rmdir /s /q build",
+    "start": "yarn build && yarn execute",
+    "test": "yarn clean && yarn build && jest --verbose ./build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/GreyJohnsonGit/Victoria3-TS-Interface.git"
+  },
+  "author": "Grey Johnson",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/GreyJohnsonGit/Victoria3-TS-Interface/issues"
+  },
+  "homepage": "https://github.com/GreyJohnsonGit/Victoria3-TS-Interface#readme",
+  "devDependencies": {
+    "@babel/core": "^7.18.13",
+    "@babel/preset-env": "^7.18.10",
+    "@babel/preset-typescript": "^7.18.6",
+    "@types/jest": "^29.0.0",
+    "@typescript-eslint/eslint-plugin": "^5.34.0",
+    "@typescript-eslint/parser": "^5.34.0",
+    "babel-jest": "^29.0.2",
+    "babel-plugin-module-resolver": "^4.1.0",
+    "dotenv": "^16.0.1",
+    "eslint": "^8.15.0",
+    "eslint-plugin-jest": "^26.8.2",
+    "eslint-plugin-tsdoc": "^0.2.17",
+    "jest": "^26.6.3",
+    "ts-node": "^10.9.1",
+    "typescript": "^4.9.5"
+  },
+  "type": "module"
+}
