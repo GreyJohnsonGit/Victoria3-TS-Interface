@@ -1,4 +1,4 @@
-import * as config from '../config.json';
+import * as FileSystem from 'fs';
 
 export interface AppConfig {
   victoria3Path: string;
@@ -6,5 +6,5 @@ export interface AppConfig {
 }
 
 export function loadConfig(): AppConfig {
-  return config;
+  return JSON.parse(FileSystem.readFileSync('config.json', 'utf8'));
 }

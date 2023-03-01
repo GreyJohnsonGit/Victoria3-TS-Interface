@@ -4,11 +4,16 @@
   "description": "Types, Serialization, and Deserialization for vic3 script files.",
   "main": "index.js",
   "scripts": {
-    "execute": "node ./build/index.js",
-    "build": "tsc -p tsconfig.json",
-    "clean": "rmdir /s /q build",
     "start": "yarn build && yarn execute",
-    "test": "yarn clean && yarn build && jest --verbose ./build"
+    "generate": "yarn clean && yarn transform && yarn execute-generate",
+    "test": "yarn clean && yarn transform && yarn execute-test",
+    "build": "yarn clean && yarn check-types && yarn transform",
+    "check-types": "yarn run tsc --noEmit",
+    "transform": "npx babel ./src --out-dir ./build --config-file ./babel.config.json --extensions \".ts\" --copy-files",
+    "clean": "if exist build rmdir /s /q build 2>nul",
+    "execute-test": "yarn jest --config=./jest.config.json --detectOpenHandles build/",
+    "execute-generate": "node ./build/generate.js",
+    "execute": "node ./build/index.js"
   },
   "repository": {
     "type": "git",
@@ -21,21 +26,25 @@
   },
   "homepage": "https://github.com/GreyJohnsonGit/Victoria3-TS-Interface#readme",
   "devDependencies": {
-    "@babel/core": "^7.18.13",
-    "@babel/preset-env": "^7.18.10",
+    "@babel/cli": "^7.19.3",
+    "@babel/core": "^7.20.5",
+    "@babel/plugin-transform-modules-commonjs": "^7.19.6",
+    "@babel/preset-env": "^7.20.2",
     "@babel/preset-typescript": "^7.18.6",
-    "@types/jest": "^29.0.0",
-    "@typescript-eslint/eslint-plugin": "^5.34.0",
-    "@typescript-eslint/parser": "^5.34.0",
+    "@types/jest": "^29.2.4",
+    "@types/prompts": "^2.4.2",
+    "@typescript-eslint/eslint-plugin": "^5.46.1",
+    "@typescript-eslint/parser": "^5.46.1",
     "babel-jest": "^29.0.2",
-    "babel-plugin-module-resolver": "^4.1.0",
+    "babel-plugin-dynamic-import-node": "^2.3.3",
+    "babel-plugin-module-resolver": "^5.0.0",
+    "babel-plugin-transform-imports": "^2.0.0",
     "dotenv": "^16.0.1",
-    "eslint": "^8.15.0",
-    "eslint-plugin-jest": "^26.8.2",
+    "eslint": "^8.30.0",
+    "eslint-plugin-jest": "^27.1.7",
     "eslint-plugin-tsdoc": "^0.2.17",
-    "jest": "^26.6.3",
+    "jest": "^29.3.1",
     "ts-node": "^10.9.1",
-    "typescript": "^4.9.5"
-  },
-  "type": "module"
+    "typescript": "^4.9.4"
+  }
 }

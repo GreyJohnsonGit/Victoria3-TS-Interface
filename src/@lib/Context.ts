@@ -1,3 +1,7 @@
+export interface IContextual {
+  context: Context;
+}
+
 export interface Context {
   filepath: string;
   line: number;

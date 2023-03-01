@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     "outDir": "./build",
-    "baseUrl": "./src",
+    "baseUrl": ".",
     "allowJs": false,
     "lib": ["DOM", "ESNext"],
     "moduleResolution": "Node",
@@ -11,7 +11,17 @@
     "strict": true,
     "experimentalDecorators": true,
     "incremental": true,
-    "module": "es6"
+    "module": "ESNext",
+    "paths": {
+      "src/*": ["./src/*"],
+      "@generated-definitions/*": ["./src/@generated-definitions/*"],
+      "@lib/*": ["./src/@lib/*"],
+      "@models/*": ["./src/@models/*"],
+      "@public/*": ["./src/@public/*"],
+      "@test-data/*": ["./src/@test-data/*"],
+      "interpreter/*": ["./src/interpreter/*"],
+      "generator/*": ["./src/generator/*"]
+    }
   },
   "include": ["./src/**/*"],
   "exclude": ["./node_modules"]

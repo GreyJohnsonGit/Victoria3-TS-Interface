@@ -1,0 +1,29 @@
+{
+  "presets": ["@babel/preset-env", "@babel/preset-typescript"],  
+  "plugins": [
+    ["module-resolver", {
+      "root": ["./"],
+      "alias": {
+        "src": "./src/",
+        "@generated-definitions": "./src/@generated-definitions/",
+        "@lib": "./src/@lib",
+        "@models": "./src/@models",
+        "@public": "./src/@public",
+        "@test-data": "./src/@test-data",
+        "interpreter": "./src/interpreter",
+        "generator": "./src/generator"
+      }
+    }],
+    ["dynamic-import-node", { 
+      "noInterop": true 
+    }]
+  ],
+  "retainLines": true,
+  "env": {
+    "test": {
+      "plugins": [
+        "@babel/plugin-transform-modules-commonjs"
+      ]
+    }
+  }
+}

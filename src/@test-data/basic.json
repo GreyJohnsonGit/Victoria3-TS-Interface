@@ -1,253 +1,99 @@
 {
-  "raw": "STATE = {\n    id = 2\n    name = \"Two\"\n    ids = { 1 2 3 }\n    names = { \"One\" \"Two\" \"Three\" }\n  }",
-  "tokenized": [
+  "text": "\nSTATE = {\n  \n  id = 2 \n  name = \"Two\" \n  ids = {\n    1 2 3 \n  }\n  names = {\n    \"One\" \"Two\" \"Three\" \n  }\n}",
+  "tokens": [
     {
       "kind": "symbol",
       "value": "#GLOBAL",
-      "context": {
-        "filepath": "test",
-        "line": 1,
-        "column": 0
-      }
+      "context": { "filepath": "test", "line": 0, "column": 0 }
     },
-    {
-      "kind": "=",
-      "context": {
-        "filepath": "test",
-        "line": 1,
-        "column": 0
-      }
-    },
-    {
-      "kind": "{",
-      "context": {
-        "filepath": "test",
-        "line": 1,
-        "column": 0
-      }
-    },
+    { "kind": "=", "context": { "filepath": "test", "line": 0, "column": 0 } },
+    { "kind": "{", "context": { "filepath": "test", "line": 0, "column": 0 } },
     {
       "kind": "symbol",
       "value": "STATE",
-      "context": {
-        "filepath": "test",
-        "line": 1,
-        "column": 0
-      }
+      "context": { "filepath": "test", "line": 1, "column": 0 }
     },
-    {
-      "kind": "=",
-      "context": {
-        "filepath": "test",
-        "line": 1,
-        "column": 6
-      }
-    },
-    {
-      "kind": "{",
-      "context": {
-        "filepath": "test",
-        "line": 1,
-        "column": 8
-      }
-    },
+    { "kind": "=", "context": { "filepath": "test", "line": 1, "column": 6 } },
+    { "kind": "{", "context": { "filepath": "test", "line": 1, "column": 8 } },
     {
       "kind": "symbol",
       "value": "id",
-      "context": {
-        "filepath": "test",
-        "line": 2,
-        "column": 4
-      }
+      "context": { "filepath": "test", "line": 3, "column": 2 }
     },
-    {
-      "kind": "=",
-      "context": {
-        "filepath": "test",
-        "line": 2,
-        "column": 7
-      }
-    },
+    { "kind": "=", "context": { "filepath": "test", "line": 3, "column": 5 } },
     {
       "kind": "number",
       "value": 2,
-      "context": {
-        "filepath": "test",
-        "line": 2,
-        "column": 9
-      }
+      "context": { "filepath": "test", "line": 3, "column": 7 }
     },
     {
       "kind": "symbol",
       "value": "name",
-      "context": {
-        "filepath": "test",
-        "line": 3,
-        "column": 4
-      }
+      "context": { "filepath": "test", "line": 4, "column": 2 }
     },
-    {
-      "kind": "=",
-      "context": {
-        "filepath": "test",
-        "line": 3,
-        "column": 9
-      }
-    },
+    { "kind": "=", "context": { "filepath": "test", "line": 4, "column": 7 } },
     {
       "kind": "string",
       "value": "Two",
-      "context": {
-        "filepath": "test",
-        "line": 3,
-        "column": 11
-      }
+      "context": { "filepath": "test", "line": 4, "column": 9 }
     },
     {
       "kind": "symbol",
       "value": "ids",
-      "context": {
-        "filepath": "test",
-        "line": 4,
-        "column": 4
-      }
+      "context": { "filepath": "test", "line": 5, "column": 2 }
     },
-    {
-      "kind": "=",
-      "context": {
-        "filepath": "test",
-        "line": 4,
-        "column": 8
-      }
-    },
-    {
-      "kind": "{",
-      "context": {
-        "filepath": "test",
-        "line": 4,
-        "column": 10
-      }
-    },
+    { "kind": "=", "context": { "filepath": "test", "line": 5, "column": 6 } },
+    { "kind": "{", "context": { "filepath": "test", "line": 5, "column": 8 } },
     {
       "kind": "number",
       "value": 1,
-      "context": {
-        "filepath": "test",
-        "line": 4,
-        "column": 12
-      }
+      "context": { "filepath": "test", "line": 6, "column": 4 }
     },
     {
       "kind": "number",
       "value": 2,
-      "context": {
-        "filepath": "test",
-        "line": 4,
-        "column": 14
-      }
+      "context": { "filepath": "test", "line": 6, "column": 6 }
     },
     {
       "kind": "number",
       "value": 3,
-      "context": {
-        "filepath": "test",
-        "line": 4,
-        "column": 16
-      }
+      "context": { "filepath": "test", "line": 6, "column": 8 }
     },
-    {
-      "kind": "}",
-      "context": {
-        "filepath": "test",
-        "line": 4,
-        "column": 18
-      }
-    },
+    { "kind": "}", "context": { "filepath": "test", "line": 7, "column": 2 } },
     {
       "kind": "symbol",
       "value": "names",
-      "context": {
-        "filepath": "test",
-        "line": 5,
-        "column": 4
-      }
+      "context": { "filepath": "test", "line": 8, "column": 2 }
     },
-    {
-      "kind": "=",
-      "context": {
-        "filepath": "test",
-        "line": 5,
-        "column": 10
-      }
-    },
-    {
-      "kind": "{",
-      "context": {
-        "filepath": "test",
-        "line": 5,
-        "column": 12
-      }
-    },
+    { "kind": "=", "context": { "filepath": "test", "line": 8, "column": 8 } },
+    { "kind": "{", "context": { "filepath": "test", "line": 8, "column": 10 } },
     {
       "kind": "string",
       "value": "One",
-      "context": {
-        "filepath": "test",
-        "line": 5,
-        "column": 14
-      }
+      "context": { "filepath": "test", "line": 9, "column": 4 }
     },
     {
       "kind": "string",
       "value": "Two",
-      "context": {
-        "filepath": "test",
-        "line": 5,
-        "column": 20
-      }
+      "context": { "filepath": "test", "line": 9, "column": 10 }
     },
     {
       "kind": "string",
       "value": "Three",
-      "context": {
-        "filepath": "test",
-        "line": 5,
-        "column": 26
-      }
+      "context": { "filepath": "test", "line": 9, "column": 16 }
     },
-    {
-      "kind": "}",
-      "context": {
-        "filepath": "test",
-        "line": 5,
-        "column": 34
-      }
-    },
-    {
-      "kind": "}",
-      "context": {
-        "filepath": "test",
-        "line": 6,
-        "column": 2
-      }
-    },
-    {
-      "kind": "}",
-      "context": {
-        "filepath": "test",
-        "line": 7,
-        "column": 0
-      }
-    }
+    { "kind": "}", "context": { "filepath": "test", "line": 10, "column": 2 } },
+    { "kind": "}", "context": { "filepath": "test", "line": 11, "column": 0 } },
+    { "kind": "}", "context": { "filepath": "test", "line": 12, "column": 0 } }
   ],
-  "parsed": {
+  "ast": {
     "kind": "assignment",
     "variable": {
       "kind": "variable",
       "name": "#GLOBAL",
       "context": {
         "filepath": "test",
-        "line": 1,
+        "line": 0,
         "column": 0
       }
     },
@@ -275,8 +121,8 @@
                   "name": "id",
                   "context": {
                     "filepath": "test",
-                    "line": 2,
-                    "column": 4
+                    "line": 3,
+                    "column": 2
                   }
                 },
                 "expression": {
@@ -284,9 +130,14 @@
                   "value": 2,
                   "context": {
                     "filepath": "test",
-                    "line": 2,
-                    "column": 9
+                    "line": 3,
+                    "column": 7
                   }
+                },
+                "context": {
+                  "filepath": "test",
+                  "line": 3,
+                  "column": 2
                 }
               },
               {
@@ -296,8 +147,8 @@
                   "name": "name",
                   "context": {
                     "filepath": "test",
-                    "line": 3,
-                    "column": 4
+                    "line": 4,
+                    "column": 2
                   }
                 },
                 "expression": {
@@ -305,9 +156,14 @@
                   "value": "Two",
                   "context": {
                     "filepath": "test",
-                    "line": 3,
-                    "column": 11
+                    "line": 4,
+                    "column": 9
                   }
+                },
+                "context": {
+                  "filepath": "test",
+                  "line": 4,
+                  "column": 2
                 }
               },
               {
@@ -317,8 +173,8 @@
                   "name": "ids",
                   "context": {
                     "filepath": "test",
-                    "line": 4,
-                    "column": 4
+                    "line": 5,
+                    "column": 2
                   }
                 },
                 "expression": {
@@ -329,8 +185,8 @@
                       "value": 1,
                       "context": {
                         "filepath": "test",
-                        "line": 4,
-                        "column": 12
+                        "line": 6,
+                        "column": 4
                       }
                     },
                     {
@@ -338,8 +194,8 @@
                       "value": 2,
                       "context": {
                         "filepath": "test",
-                        "line": 4,
-                        "column": 14
+                        "line": 6,
+                        "column": 6
                       }
                     },
                     {
@@ -347,16 +203,21 @@
                       "value": 3,
                       "context": {
                         "filepath": "test",
-                        "line": 4,
-                        "column": 16
+                        "line": 6,
+                        "column": 8
                       }
                     }
                   ],
                   "context": {
                     "filepath": "test",
-                    "line": 4,
-                    "column": 10
+                    "line": 5,
+                    "column": 8
                   }
+                },
+                "context": {
+                  "filepath": "test",
+                  "line": 5,
+                  "column": 2
                 }
               },
               {
@@ -366,8 +227,8 @@
                   "name": "names",
                   "context": {
                     "filepath": "test",
-                    "line": 5,
-                    "column": 4
+                    "line": 8,
+                    "column": 2
                   }
                 },
                 "expression": {
@@ -378,8 +239,8 @@
                       "value": "One",
                       "context": {
                         "filepath": "test",
-                        "line": 5,
-                        "column": 14
+                        "line": 9,
+                        "column": 4
                       }
                     },
                     {
@@ -387,8 +248,8 @@
                       "value": "Two",
                       "context": {
                         "filepath": "test",
-                        "line": 5,
-                        "column": 20
+                        "line": 9,
+                        "column": 10
                       }
                     },
                     {
@@ -396,16 +257,21 @@
                       "value": "Three",
                       "context": {
                         "filepath": "test",
-                        "line": 5,
-                        "column": 26
+                        "line": 9,
+                        "column": 16
                       }
                     }
                   ],
                   "context": {
                     "filepath": "test",
-                    "line": 5,
-                    "column": 12
+                    "line": 8,
+                    "column": 10
                   }
+                },
+                "context": {
+                  "filepath": "test",
+                  "line": 8,
+                  "column": 2
                 }
               }
             ],
@@ -414,17 +280,28 @@
               "line": 1,
               "column": 8
             }
+          },
+          "context": {
+            "filepath": "test",
+            "line": 1,
+            "column": 0
           }
         }
       ],
       "context": {
         "filepath": "test",
-        "line": 1,
+        "line": 0,
         "column": 0
       }
+    },
+    "context": {
+      "filepath": "test",
+      "line": 0,
+      "column": 0
     }
   },
-  "interpreted": [{
+  "obj": [{
+    "objId": "STATE",
     "id": 2,
     "name": "Two",
     "ids": [1, 2, 3],

@@ -1,6 +1,20 @@
-import { ContextualExpression, Expression } from 'Parser';
-import { Token } from 'Token';
-import { Context, toLink } from './Context';
+import { Context, toLink } from '@lib/Context';
+import { Expression } from 'interpreter/Parser';
+import { Token, TokenKind } from 'interpreter/Token';
+
+export class ErrorFactory {
+  public static ExpectedAssignment(expression: Expression) {
+    return new Error(`Expected Assignment, got ${expression.kind} at ${toLink(expression.context)}`);
+  }
+
+  public static ExpectedArray(expression: Expression) {
+    return new Error(`Expected Array, got ${expression.kind} at ${toLink(expression.context)}`);
+  }
+
+  public static ExpectedField(field: string, expression: Expression) {
+    return new Error(`Expected ${field} in ${expression.kind} at ${toLink(expression.context)}`);
+  }
+}
 
 export function UnexpectedToken(character: string, cx: Context) {
   return new Error(`Unexpected Token '${character}' at ${toLink(cx)}`);
@@ -22,8 +36,8 @@ export function InvalidSymbolToken(cx: Context) {
   return new Error(`Attempted to tokenize non-symbol as symbol at ${toLink(cx)}`);
 }
 
-export function InvalidToken(cx: Context) {
-  return new Error(`Invalid Token at ${toLink(cx)}`);
+export function InvalidToken(kind: TokenKind, value: unknown, cx: Context) {
+  return new Error(`Invalid Token (${kind}, ${value}) at ${toLink(cx)}`);
 }
 
 export function ExpectedAst(expression: Expression) {
@@ -70,7 +84,7 @@ export function ExpectedAssignmentGotToken(token: Token, cx: Context) {
   return new Error(`Expected '=', got ${token.kind} at ${toLink(cx)}`);
 }
 
-export function ExpectedDefinitionGotExpression(expression: ContextualExpression) {
+export function ExpectedDefinitionGotExpression(expression: Expression) {
   return new Error(`Expected Definition, got ${expression.kind} at ${toLink(expression.context)}`);
 }
 

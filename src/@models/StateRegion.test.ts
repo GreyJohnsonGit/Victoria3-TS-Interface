@@ -1,42 +1,50 @@
-import { AppConfig, loadConfig } from './AppConfig';
-import { loadStateRegions, StateRegion, toString } from './StateRegion';
-import { validateSeaStateRegion } from './Validator';
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { AppConfig, loadConfig } from '@lib/AppConfig';
+import { StateRegion, StateRegionInterpreter } from '@models/StateRegion';
+import { Parser } from 'interpreter/Parser';
+import { Tokenizer } from 'interpreter/Token';
+import { VTI } from 'interpreter/VTI';
 
 describe('StateRegion', () => {
   let config: AppConfig;
   let stateRegions: StateRegion[];
+  let vti: VTI;
+  let interpreter: StateRegionInterpreter;
 
-  it('should load state regions', async () => {
+  it('Should load state regions', async () => {
     // Arrange
+    interpreter = new StateRegionInterpreter();
+    vti = new VTI(
+      new Tokenizer(), 
+      new Parser()
+    );
     config = loadConfig();
 
     // Act
-    stateRegions = await loadStateRegions(config);
-    const landStateRegions = stateRegions.filter(r => !validateSeaStateRegion(r));
+    stateRegions = vti.encodeFolder<StateRegion>(
+      interpreter.path(config), interpreter
+    ).flat();
     
     // Assert
     expect(stateRegions).toBeDefined();
     expect(stateRegions.length).toBe(774);
-    expect(landStateRegions.length).toBe(617);
   });
 
   it.each([
     ['STATE_ARCTIC_OCEAN_01', 3037, ['x39CACA'], ['x39CACA']],
     ['STATE_BLACK_SEA', 3036, ['x48FAFA'], undefined],
-  ])('should find SeaStateRegion %s', async (name, id, provinces, impassable) => {
+  ])('should find sea state region %s', async (name, id, provinces, impassable) => {
     // Act
-    const result = stateRegions.find(r => r.id === id);
+    const result = stateRegions.find(r => r.get('id') === id);
+    if (result === undefined) {
+      throw Error(`Could not find state region ${name} with id ${id}`);
+    }
 
     // Assert
-    if (result === undefined) {
-      return expect(result).toBeDefined();
-    }
-    expect(result.name).toBe(name);
-    expect(result.id).toBe(id);
-    expect(result.provinces).toEqual(provinces);
-    expect(result.impassable).toEqual(impassable);
-    expect(result.context).toBeDefined();
-    expect(validateSeaStateRegion(result)).toBe(true);
+    expect(result.get('name')).toBe(name);
+    expect(result.get('id')).toBe(id);
+    expect(result.get('provinces')).toEqual(provinces);
+    expect(result.getOptional('impassable').unwrapOr(undefined)).toEqual(impassable);
   });
 
   it.each([
@@ -87,69 +95,69 @@ describe('StateRegion', () => {
       ],
 
     ],
-  ])('should find StateRegion %s', (name, id, subsistence_building, city, farm, mine, wood, arable_land, 
+  ])('Should find land state region %s', (name, id, subsistence_building, city, farm, mine, wood, arable_land, 
     arable_resources, capped_resources, provinces
   ) => {
     // Act
-    const result: StateRegion | undefined = stateRegions.find(r => r.id === id);
+    const result = stateRegions.find(r => r.get('id') === id);
+    if (result === undefined) {
+      throw Error(`Could not find state region ${name} with id ${id}`);
+    }
+    const raw = result.raw();
+    raw.arable_resources?.sort();
+    raw.provinces?.sort();
+    raw.capped_resources?.sort((a, b) => a.resource.localeCompare(b.resource));
 
     // Assert
-    if (result === undefined) {
-      return expect(result).toBeDefined();
-    }
-    expect(result.name).toBe(name);
-    expect(result.id).toBe(id);
-    expect(result.subsistence_building).toBe(subsistence_building);
-    expect(result.city).toBe(city);
-    expect(result.farm).toBe(farm);
-    expect(result.mine).toBe(mine);
-    expect(result.wood).toBe(wood);
-    expect(result.arable_land).toBe(arable_land);
-    expect(result.arable_resources?.sort()).toEqual(arable_resources?.sort());
-    expect(
-      result.capped_resources?.sort((a, b) => a.resource.localeCompare(b.resource))
-    ).toEqual(
-      capped_resources?.sort((a, b) => a.resource.localeCompare(b.resource))
-    );
-    expect(result.provinces?.sort()).toEqual(provinces?.sort());
     expect(result.context).toBeDefined();
-    expect(validateSeaStateRegion(result)).toBe(false);
+    expect(result.raw()).toEqual({
+      name,
+      id,
+      subsistence_building,
+      city,
+      farm,
+      mine,
+      wood,
+      arable_land,
+      arable_resources: arable_resources.sort(),
+      provinces: provinces.sort(),
+      capped_resources: capped_resources?.sort(
+        (a, b) => a.resource.localeCompare(b.resource)
+      ),
+    });
   });
 
-  it('should convert StateRegion to string', () => {
+  it('Should convert StateRegion to string', () => {
     // Arrange
     const stateRegion = stateRegions[0];
       
     // Act
-    const result = toString(stateRegion);
-      
+    const stringRepresentation = vti.decode([stateRegion], 'test', interpreter);
+
     // Assert
-    expect(result).toBe(`STATE_SVEALAND = {
-  id = 1
-  provinces = { "x0974E5" "x216569" "x24A2F1" "x298E7B" "x317138" "x36F523" "x3844C0" "x3E2C22" "x404643" "x41C729" "x432E07" "x45B6EF" "x4628A5" "x4836F2" "x4B02EB" "x4C9918" "x4FA424" "x604060" "x62D0D4" "x656512" "x6CF949" "x6E95C2" "x6F40EC" "x823263" "x8AC21D" "x90845E" "x93C3BC" "x93C76C" "x9686A5" "x9BBBE3" "xA001A0" "xA08021" "xA6C31B" "xA82FF7" "xA86C50" "xA9078A" "xB3F1FB" "xB90566" "xB9391F" "xBC0288" "xC0C0E0" "xC480A5" "xC8AEAF" "xCBFD28" "xCF16B1" "xD155CE" "xD702F7" "xD96FB9" "xE6C5FC" "xE7A6D6" "xE9B084" "xEA6A0F" "xEB5D5F" "xEFA14D" "xF08323" "xF48646" "xF8E400" "xFCCAFA" }
-
-  subsistence_building = "building_subsistence_pastures"
-  traits = { "state_trait_bergslagen" "state_trait_scandinavian_forests" "state_trait_natural_harbors" }
-  city = "x9686A5"
-  port = "x93C3BC"
-  farm = "xF48646"
-  mine = "x6F40EC"
-  wood = "x4C9918"
-  arable_land = 30
-  arable_resources = { "bg_rye_farms" "bg_livestock_ranches" }
-  capped_resources = {
-    bg_iron_mining = 36
-    bg_lead_mining = 18
-    bg_logging = 23
-    bg_fishing = 11
-    bg_iron_mining = 36
-    bg_lead_mining = 18
-    bg_logging = 23
-    bg_fishing = 11
-  }
-
-}`
-    );
+    expect(stringRepresentation).toBe(svealand);
   });
 });
 
+const svealand = `
+STATE_SVEALAND = {
+  
+  id = 1 
+  subsistence_building = "building_subsistence_pastures" 
+  provinces = {
+    "x0974E5" "x216569" "x24A2F1" "x298E7B" "x317138" "x36F523" "x3844C0" "x3E2C22" "x404643" "x41C729" "x432E07" "x45B6EF" "x4628A5" "x4836F2" "x4B02EB" "x4C9918" "x4FA424" "x604060" "x62D0D4" "x656512" "x6CF949" "x6E95C2" "x6F40EC" "x823263" "x8AC21D" "x90845E" "x93C3BC" "x93C76C" "x9686A5" "x9BBBE3" "xA001A0" "xA08021" "xA6C31B" "xA82FF7" "xA86C50" "xA9078A" "xB3F1FB" "xB90566" "xB9391F" "xBC0288" "xC0C0E0" "xC480A5" "xC8AEAF" "xCBFD28" "xCF16B1" "xD155CE" "xD702F7" "xD96FB9" "xE6C5FC" "xE7A6D6" "xE9B084" "xEA6A0F" "xEB5D5F" "xEFA14D" "xF08323" "xF48646" "xF8E400" "xFCCAFA" 
+  }
+  traits = {
+    "state_trait_bergslagen" "state_trait_scandinavian_forests" "state_trait_natural_harbors" 
+  }
+  city = "x9686A5" 
+  port = "x93C3BC" 
+  farm = "xF48646" 
+  mine = "x6F40EC" 
+  wood = "x4C9918" 
+  arable_land = 30 
+  arable_resources = {
+    "bg_rye_farms" "bg_livestock_ranches" 
+  }
+  naval_exit_id = 3000 
+}`;
