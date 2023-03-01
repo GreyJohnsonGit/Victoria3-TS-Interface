@@ -1,6 +1,6 @@
 import * as FileSystem from 'fs';
 import { AppConfig } from 'src/@lib/AppConfig';
-import { IPersistent } from 'src/@models/IPersistent';
+import { IPersistent } from 'src/@lib/IPersistent';
 import { IInterpreter } from 'src/interpreter/Interpreter';
 import { Ast, IParser, Parser } from 'src/interpreter/Parser';
 import { ITokenizer, Tokenizer } from 'src/interpreter/Token';
