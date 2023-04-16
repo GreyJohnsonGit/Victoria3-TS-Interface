@@ -1,4 +1,4 @@
-import { isDefined } from '@lib/Validator';
+import { z } from 'zod';
 
 export type Option<T> = Some<T> | None<T>;
 
@@ -13,6 +13,7 @@ export interface None<T> extends OptionMethods<T> {
 
 export interface OptionMethods<T> {
   unwrapOr(defaultValue: T): T;
+  map<R>(onSome: (value: T) => Option<R> | void): Option<R> | void;
   isSome(): this is Some<T>;
   isNone(): this is None<T>;
   equals(other: NonNullable<T>): boolean;
@@ -20,26 +21,35 @@ export interface OptionMethods<T> {
 }
 
 type MatchArms<T, R> = { 
-  ['Some']: (value: NonNullable<T>) => R; 
+  ['Some']: (value: T) => R; 
   ['None']: () => R; 
 };
 
+export const Optional = <T>(typeValue: z.ZodType<T>) => 
+  z.custom<Option<T>>(value => {
+    if (isOption<T>(value) && value.isSome()) {
+      return typeValue.safeParse(value.value).success;
+    }
+
+    if (isOption<T>(value) && value.isNone())
+      return true;
+  });
 export function isOption<T>(value: unknown): value is Option<T> {
   return isSome(value) || isNone(value);
 }
 
 export function isSome<T>(value: unknown): value is Some<T> {
   const option = value as Option<T>;
-  return option.kind === 'Some';
+  return typeof option === 'object' && option.kind === 'Some';
 }
 
 export function isNone<T>(value: unknown): value is None<T> {
   const option = value as Option<T>;
-  return option.kind === 'None';
+  return typeof option === 'object' && option.kind === 'None';
 }
 
 export function Option<T>(value: T): Option<T> {
-  return isDefined(value) ? Some(value) : None();
+  return value !== null && value !== undefined ? Some(value) : None();
 }
 
 export function None<T>(): None<T> {
@@ -48,6 +58,7 @@ export function None<T>(): None<T> {
     unwrapOr(defaultValue: T) {
       return defaultValue;
     },
+    map: () => None(),
     isSome: () => false,
     isNone: () => true,
     equals: (value: T) => value === undefined,
@@ -60,6 +71,7 @@ export function Some<T>(value: NonNullable<T>): Some<T> {
     kind: 'Some',
     value,
     unwrapOr: () => value,
+    map: <R>(onSome: (value: T) => Option<R>) => onSome(value),
     isSome: () => true,
     isNone: () => false,
     equals: (other: T) => value === other,

@@ -1,10 +1,32 @@
-import { x } from '@models/ProvinceId';
-import { Victoria3 } from '@public/Victoria3';
+import { StateRegionExt } from '@lib/StateRegionExt';
+import * as FileSystem from 'fs';
+import { Jomini } from 'jomini';
+import { Some } from './@lib/Option';
 
-const v3 = new Victoria3();
+async function main() {
+  const jomini = await Jomini.initialize();
 
-v3.StateRegions.get('STATE_YUKON_TERRITORY').set('name', 'STATE_YUKON_TERRITORY');
-v3.StateRegions.get('STATE_YUKON_TERRITORY').setOptional('port', x('00','F2','E3'));
-v3.StateRegions.get('STATE_ABRUZZO').setOptional('traits', ['state_trait_nile_river', 'state_trait_zambezi_river']);
+  const data = FileSystem.readFileSync('../../Steam/steamapps/common/Victoria 3/game/map_data/state_regions/00_west_europe.txt', 'utf8');
+  const result = jomini.parseText(data);
+  
+  const rawStateRegions = Object.entries(result);
+  const stateRegion = StateRegionExt.fromJSON(rawStateRegions[0][0], rawStateRegions[0][1]);
+  
+  const backToJSON = jomini.write(writer => 
+    stateRegion.match({
+      Some: (stateRegion) => StateRegionExt.write(Some(stateRegion), writer),
+      None: () => undefined,
+    })
+  );
 
-v3.save();
+  const asString = String.fromCharCode(...backToJSON);
+
+  stateRegion.match({
+    Some: (stateRegion) => stateRegion.cappedResources.kind === 'Some' && console.log(stateRegion.cappedResources.value),
+    None: () => undefined,
+  });
+
+  FileSystem.writeFileSync('result.json', asString, 'utf8');
+}
+
+main();
