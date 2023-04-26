@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "yarn safe-build && yarn execute",
+    "fast-start": "yarn fast-build && yarn execute",
     "generate": "yarn clean-build && yarn execute-generate",
     "unit-test": "yarn clean-build && yarn execute-unit-test",
     "functional-test": "yarn clean-build && yarn execute-functional-test",

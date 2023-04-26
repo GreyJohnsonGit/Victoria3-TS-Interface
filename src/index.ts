@@ -12,19 +12,12 @@ async function main() {
   const rawStateRegions = Object.entries(result);
   const stateRegion = StateRegionExt.fromJSON(rawStateRegions[0][0], rawStateRegions[0][1]);
   
-  const backToJSON = jomini.write(writer => 
-    stateRegion.match({
-      Some: (stateRegion) => StateRegionExt.write(Some(stateRegion), writer),
-      None: () => undefined,
-    })
-  );
+  const backToJSON = jomini.write(writer => stateRegion.match({
+    Some: (stateRegion) => StateRegionExt.write(Some(stateRegion), writer),
+    None: () => {},
+  }));
 
   const asString = String.fromCharCode(...backToJSON);
-
-  stateRegion.match({
-    Some: (stateRegion) => stateRegion.cappedResources.kind === 'Some' && console.log(stateRegion.cappedResources.value),
-    None: () => undefined,
-  });
 
   FileSystem.writeFileSync('result.json', asString, 'utf8');
 }

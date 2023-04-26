@@ -45,7 +45,6 @@ export class CappedResourceExt {
     cappedResources: Option<CappedResource[]>,
     writer: JominiWriter
   ): void {
-    console.log(cappedResources.unwrapOr([]));
     if (cappedResources.isNone() || cappedResources.value.length === 0)
       return;
 
