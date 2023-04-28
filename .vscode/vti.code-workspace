@@ -1,16 +1,16 @@
 {
 "folders": [
     {
-        "name": "Victoria3-TS-Interface",
-        "path": "../"
+      "name": "Vicky",
+      "path": "../"
     },
     {
-      "name": "Victoria3",
-      "path": "D:/Steam/steamapps/common/Victoria 3"
+      "name": "1444",
+      "path": "C:\\Users\\Main\\Documents\\Paradox Interactive\\Victoria 3\\mod\\1444"
     },
     {
-      "name": "Mod-Output",
-      "path": "D:/Mod-Output"
+      "name": "Vanilla",
+      "path": "D:\\Steam\\steamapps\\common\\Victoria 3\\game"
     }
 ],
   "extensions": {

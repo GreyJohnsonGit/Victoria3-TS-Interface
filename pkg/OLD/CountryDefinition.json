@@ -1,0 +1,13 @@
+{
+  "path": "99_converted_countries.txt",
+  "definitions": [
+    {
+      "tag": "A00",
+      "color": [146, 43, 62],
+      "type": "decentralized",
+      "tier": "principality",
+      "cultures": [ "formosan" ],
+      "capital": "STATE_FORMOSA"
+    }
+  ]
+}
