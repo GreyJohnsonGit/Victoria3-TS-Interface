@@ -26,6 +26,7 @@
       "source.organizeImports": true
     },
     "editor.rulers": [80],
+    "editor.codeLens": false,
     "explorer.fileNesting.enabled": true,
     "git.openRepositoryInParentFolders": "always",
     "workbench.tree.renderIndentGuides": "onHover",
@@ -44,12 +45,17 @@
       "dbaeumer",
       "folderpath",
       "ghmcadams",
+      "IJSON",
       "Jomini",
       "linebreak",
+      "Pdoxcl",
+      "TJSON",
       "tsdoc",
-      "unvalidated"
+      "unvalidated",
+      "Xunit"
     ],
     "explorer.fileNesting.patterns": {
+      "*.cs": "${capture}.test.cs, ${capture}.mock.cs",
       "package.json": ".eslintrc, .eslintrc.json, yarn.lock, .gitignore, app.config.js, babel.config.js, eas.json, tsconfig.json, metro.config.js, babel.config.json, jest.config.json, LICENSE",
       "*.js": "${capture}.lib.js, ${capture}.test.js, ${capture}.native.js",
       "*.tsx": "${capture}.lib.ts, ${capture}.test.tsx, ${capture}.native.tsx",
