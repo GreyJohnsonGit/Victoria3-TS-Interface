@@ -40,12 +40,32 @@ namespace Vicky {
       Capital = new Optional<string>(capital);
     }
 
+    public CountryDefinition(
+      JSONCountryDefinition definition
+    ) : this(
+      definition.tag,
+      definition.cultures,
+      definition.color,
+      CountryTypeHelper.FromString(definition.country_type).OrNull(),
+      CountryTierHelper.FromString(definition.tier).OrNull(),
+      definition.religion,
+      definition.capital
+    ) {}
+
     public string SerializeToJSON() {
-      return this.AsJson().SerializeToJSON();
+      return DefaultJSONSerializer.Serialize(this.AsJson());
     }
 
     public string SerializeToPDX() {
-      return this.AsJson().SerializeToPDX();
+      return
+@$"{Tag} = {{
+  color = {{ {Color[0]} {Color[1]} {Color[2]} }}
+  {CountryTypeHelper.ToString(Type).Map(t => $"country_type = {t}").Or("# No Type")}
+  {CountryTierHelper.ToString(Tier).Map(t => $"tier = {t}").Or("# No Tier")}
+  cultures = {Formatter.Array(Cultures)}
+  {Religion.Map(r => $"religion = {r}").Or("# No Religion")}
+  {Capital.Map(c => $"capital = {c}").Or("# No Capital")}
+}}";
     }
 
     public JSONCountryDefinition AsJson() {

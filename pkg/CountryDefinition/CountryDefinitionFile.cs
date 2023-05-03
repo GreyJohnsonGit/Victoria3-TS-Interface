@@ -3,8 +3,8 @@ using DotNext;
 
 namespace Vicky {
   public interface ICountryDefinitionFile : 
-    IFileDefinition<ICountryDefinition>, IParadoxRead 
-  {
+    IFileDefinition<ICountryDefinition>, 
+    IParadoxRead {
     public JSONCountryDefinitionFile AsJson();
   }
 
@@ -14,24 +14,41 @@ namespace Vicky {
     public WriteStrategy WriteStrategy { get; set; }
     public ICountryDefinition[] Data { get; set; }
     
+    private ICountryDefinitionFactory _factory;
+
     public CountryDefinitionFile(
       string sourcePath, 
       string sourceTimestamp, 
       WriteStrategy writeStrategy, 
-      ICountryDefinition[] data
+      ICountryDefinition[] data,
+      ICountryDefinitionFactory? factory = null
     ) {
       SourcePath = sourcePath;
       SourceTimestamp = sourceTimestamp;
       WriteStrategy = writeStrategy;
       Data = data;
+      _factory = factory ?? new CountryDefinitionFactory(new IO());
     }
 
+    public CountryDefinitionFile(
+      JSONCountryDefinitionFile file,
+      ICountryDefinitionFactory? factory = null
+    ) : this(
+      file.SourcePath,
+      file.SourceTimestamp,
+      file.WriteStrategy,
+      file.Data.Select(d => new CountryDefinition(d)).ToArray(),
+      factory
+    ) {}
+
     public string SerializeToJSON() {
-      return this.AsJson().SerializeToJSON();
+      return DefaultJSONSerializer.Serialize(this.AsJson());
     }
 
     public string SerializeToPDX() {
-      return this.AsJson().SerializeToJSON();
+      return this.Data
+        .Select(d => d.SerializeToPDX())
+        .Aggregate((a, b) => $"{a}\n{b}");
     }
 
     public void TokenCallback(ParadoxParser parser, string token) {

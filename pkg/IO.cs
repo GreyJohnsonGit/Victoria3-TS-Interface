@@ -4,6 +4,8 @@ namespace Vicky {
   public interface IIO {
     Result<string> Read(string path);
     Result<string> Write(string path, string content);
+    Result<Stream> ReadStream(string path);
+    Result<string> GetLastWriteTimeUtc(string path);
   }
 
   public class IO : IIO {
@@ -22,6 +24,18 @@ namespace Vicky {
       } catch (Exception e) {
         return new Result<string>(e);
       }
+    }
+
+    public Result<Stream> ReadStream(string path) {
+      try {
+        return new FileStream(path, FileMode.Open);
+      } catch (Exception e) {
+        return new Result<Stream>(e);
+      }
+    }
+
+    public Result<string> GetLastWriteTimeUtc(string path) {
+      return File.GetLastWriteTimeUtc(path).ToString();
     }
   }
 }
