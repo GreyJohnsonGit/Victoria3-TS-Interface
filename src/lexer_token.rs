@@ -21,6 +21,13 @@ pub const POUND: char = '#';
 pub const BANG: char = '!';
 pub const COMMA: char = ',';
 pub const SEMI_COLON: char = ';';
+pub const NULL_CHAR: char = '\0';
+pub const NEWLINE: char = '\n';
+pub const UNDERSCORE: char = '_';
+
+pub const ONE: &str = "1";
+pub const YES: &str = "yes";
+pub const NO: &str = "no";
 
 impl LexerToken {
   pub fn from_char(c: char) -> LexerToken {
@@ -37,5 +44,9 @@ impl LexerToken {
       SEMI_COLON => LexerToken::Comma,
       _ => LexerToken::Untyped
     }
+  }
+
+  pub fn equals_char(&self, c: char) -> bool {
+    return LexerToken::from_char(c) == *self;
   }
 }
