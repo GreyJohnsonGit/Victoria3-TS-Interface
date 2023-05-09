@@ -5,3 +5,4 @@ edition = "2021"
 
 [dependencies]
 chrono = "0.4.19"
+jomini = "0.21.2"
