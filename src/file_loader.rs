@@ -1,6 +1,8 @@
 use crate::config::IConfig;
 use crate::mod_builder::{IModBuilder, ModBuilder};
+use std::fs;
 use std::path::Path;
+use crate::country_definition::country_definition::CountryDefinition;
 
 pub trait IFileLoader {
   fn load_vanilla(&self) -> Result<bool, String>;
@@ -27,6 +29,22 @@ impl IFileLoader for FileLoader {
     if path.is_dir() == false {
       return Err(format!("Vanilla path {} does not exist!", path.display()));
     }
+
+    { let path_extension = "common/country_definitions";
+      let path = path.join(path_extension);
+      let files = match fs::read_dir(path.clone()) {
+        Err(e) => return Err(format!("{} @ {}", e, path.to_str().unwrap())),
+        Ok(files) => files,
+      };
+
+      for file in files {
+        if let Ok(file) = file {
+          let text = fs::read_to_string(file.path()).unwrap();
+          let country_definitions = CountryDefinition::from_pdx(text);
+        }
+      }
+    };
+      
     
     println!("Loading vanilla files from {}...", path.display());
     
@@ -58,6 +76,7 @@ mod tests {
     // Arrange
     let temp_directory = tempfile::tempdir().unwrap();
     let path: String = temp_directory.path().to_string_lossy().into();
+    fs::create_dir_all(path.clone() + "/common/country_definitions/").unwrap();
 
     let mut config = MockIConfig::new();
     config.expect_get_vanilla_path()
@@ -71,6 +90,7 @@ mod tests {
     let result = loader.load_vanilla();
 
     // Assert
+    println!("{:?}", result);
     assert!(result.is_ok());
   }
 
