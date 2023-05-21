@@ -1,16 +1,6 @@
 use jomini::{Windows1252Encoding, text::ValueReader, DeserializeError, Scalar};
 use serde::de::Error;
-
-const HSV: &'static str = "hsv";
-const HSV360: &'static str = "hsv360";
-const RGB: &'static str = "rgb";
-
-#[derive(PartialEq, Debug)]
-pub enum Color {
-  HSV(f32, f32, f32),
-  HSV360(u16, u16, u16),
-  RGB(u8, u8, u8),
-}
+use crate::color::{Color, HSV, RGB, HSV360};
 
 pub trait IValueReaderExt {
   /// Reads a color from a value reader.
@@ -43,11 +33,11 @@ impl IValueReaderExt for ValueReader<'_, '_, Windows1252Encoding> {
     let array = values[1].read_array();
 
     match (format, array) {
-      (Ok(f), Ok(a)) => {
-        match f.as_str() {
-          HSV => return read_hsv(&mut a.values().collect()),
-          RGB => return read_rgb(&mut a.values().collect()),
-          HSV360 => return read_hsv360(&mut a.values().collect()),
+      (Ok(format), Ok(array)) => {
+        match format.as_str() {
+          HSV => return read_hsv(&mut array.values().collect()),
+          RGB => return read_rgb(&mut array.values().collect()),
+          HSV360 => return read_hsv360(&mut array.values().collect()),
           _ => return Err(DeserializeError::custom("Invalid color format")),
         };
       },
@@ -161,6 +151,7 @@ mod tests {
   #[case("c = rgb { 12 23 244 }", Color::RGB(12, 23, 244))]
   #[case("c = hsv { 0.1 0.5 0.8 }", Color::HSV(0.1, 0.5, 0.8))]
   #[case("c = hsv360 { 101 50 355 }", Color::HSV360(101, 50, 355))]
+  #[case("c = hsv360{ 101 50 355 }", Color::HSV360(101, 50, 355))]
   fn read_color_with_valid_inputs_should_succeed(
     #[case] input: &str,
     #[case] expected: Color

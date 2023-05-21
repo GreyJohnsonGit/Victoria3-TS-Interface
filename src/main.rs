@@ -1,16 +1,22 @@
+use vicky::country_definition::country_definition_factory::CountryDefinitionFactory;
 use vicky::file_loader::{FileLoader, IFileLoader};
 use vicky::config::{Config, IConfig};
+use vicky::mod_builder::IModBuilder;
 
 fn main() {
-  let config = Config::new(
-    String::from("D:/Steam/steamapps/common/Victoria 3/game"),
-    String::from("./pdx"),
-    String::from("./json"),
-    String::from("./mod"),
-    String::from("./cache")
-  ).clone_box();
+  let config: Box<dyn IConfig> = Box::from(Config::new(
+    String::from("D:\\Steam\\steamapps\\common\\Victoria 3\\game"),
+    String::from(".\\pdx"),
+    String::from(".\\json"),
+    String::from(".\\mod"),
+    String::from(".\\cache")
+  ));
+  let country_definition_factory = CountryDefinitionFactory::new_boxed();
 
-  let filer_loader = FileLoader::new(config.clone_box());
+  let mut filer_loader = FileLoader::new(
+    &config,
+    &country_definition_factory
+  );
 
   if filer_loader.load_vanilla().is_err() {
     panic!("Failed to load vanilla files!");

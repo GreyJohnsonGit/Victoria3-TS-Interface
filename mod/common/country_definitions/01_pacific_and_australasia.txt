@@ -1,0 +1,386 @@
+HAW = {
+  color = rgb { 48 169 96 }
+  country_type = unrecognized
+  tier = kingdom
+  cultures = { hawaiian }
+  capital = STATE_HAWAIIAN_ISLANDS
+  religion = protestant
+}
+
+NTU = {
+  color = rgb { 62 92 54 }
+  country_type = decentralized
+  tier = principality
+  cultures = { maori }
+  capital = STATE_SOUTH_ISLAND
+  # No Religion
+}
+
+NTO = {
+  color = rgb { 148 185 190 }
+  country_type = decentralized
+  tier = principality
+  cultures = { maori }
+  capital = STATE_NORTH_ISLAND
+  # No Religion
+}
+
+KNK = {
+  color = rgb { 190 173 103 }
+  country_type = decentralized
+  tier = principality
+  cultures = { melanesian }
+  capital = STATE_KANAK
+  # No Religion
+}
+
+PPU = {
+  color = rgb { 81 97 170 }
+  country_type = decentralized
+  tier = principality
+  cultures = { melanesian }
+  capital = STATE_EASTERN_NEW_GUINEA
+  # No Religion
+}
+
+HLA = {
+  color = rgb { 210 184 220 }
+  country_type = decentralized
+  tier = principality
+  cultures = { melanesian }
+  capital = STATE_BOUGAINVILLE
+  # No Religion
+}
+
+BLA = {
+  color = rgb { 140 166 75 }
+  country_type = decentralized
+  tier = principality
+  cultures = { melanesian }
+  capital = STATE_SOLOMON_ISLANDS
+  # No Religion
+}
+
+BLG = {
+  color = rgb { 140 166 75 }
+  country_type = unrecognized
+  tier = principality
+  cultures = { bornean }
+  capital = STATE_EAST_BORNEO
+  # No Religion
+}
+
+KTI = {
+  color = rgb { 137 88 58 }
+  country_type = unrecognized
+  tier = principality
+  cultures = { bornean }
+  capital = STATE_EAST_BORNEO
+  # No Religion
+}
+
+FJI = {
+  color = rgb { 159 173 219 }
+  country_type = decentralized
+  tier = principality
+  cultures = { melanesian }
+  capital = STATE_FIJI
+  # No Religion
+}
+
+SKH = {
+  color = rgb { 54 102 190 }
+  country_type = decentralized
+  tier = principality
+  cultures = { ainu siberian }
+  capital = STATE_SAKHALIN
+  # No Religion
+}
+
+MCR = {
+  color = rgb { 248 218 99 }
+  country_type = decentralized
+  tier = principality
+  cultures = { micronesian }
+  capital = STATE_EAST_MICRONESIA
+  # No Religion
+}
+
+VNT = {
+  color = rgb { 37 214 50 }
+  country_type = decentralized
+  tier = principality
+  cultures = { melanesian }
+  capital = STATE_VANUATU
+  # No Religion
+}
+
+NRU = {
+  color = rgb { 231 131 17 }
+  country_type = decentralized
+  tier = principality
+  cultures = { melanesian }
+  capital = STATE_NAURU
+  # No Religion
+}
+
+PLY = {
+  color = rgb { 176 62 136 }
+  country_type = decentralized
+  tier = principality
+  cultures = { polynesian }
+  capital = STATE_TAHITI
+  # No Religion
+}
+
+AOT = {
+  color = rgb { 47 140 191 }
+  country_type = unrecognized
+  tier = empire
+  cultures = { maori }
+  capital = STATE_NORTH_ISLAND
+  # No Religion
+}
+
+ULR = {
+  color = rgb { 112 54 16 }
+  country_type = decentralized
+  tier = principality
+  cultures = { aborigine }
+  capital = STATE_NORTHERN_TERRITORY
+  # No Religion
+}
+
+NSW = {
+  color = rgb { 114 165 203 }
+  country_type = colonial
+  tier = principality
+  cultures = { australian }
+  capital = STATE_NEW_SOUTH_WALES
+  # No Religion
+}
+
+WAS = {
+  color = rgb { 118 115 97 }
+  country_type = colonial
+  tier = principality
+  cultures = { australian }
+  capital = STATE_WESTERN_AUSTRALIA
+  # No Religion
+}
+
+SAS = {
+  color = rgb { 170 90 128 }
+  country_type = colonial
+  tier = principality
+  cultures = { australian }
+  capital = STATE_SOUTH_AUSTRALIA
+  # No Religion
+}
+
+UNT = {
+  color = rgb { 170 167 151 }
+  country_type = unrecognized
+  tier = principality
+  cultures = { maori }
+  capital = STATE_NORTH_ISLAND
+  religion = protestant
+}
+
+NNG = {
+  color = rgb { 209 160 107 }
+  country_type = decentralized
+  tier = principality
+  cultures = { aborigine }
+  capital = STATE_WESTERN_AUSTRALIA
+  # No Religion
+}
+
+GML = {
+  color = rgb { 91 191 83 }
+  country_type = decentralized
+  tier = principality
+  cultures = { aborigine }
+  capital = STATE_NEW_SOUTH_WALES
+  # No Religion
+}
+
+AST = {
+  color = rgb { 77 139 106 }
+  country_type = colonial
+  tier = kingdom
+  cultures = { australian }
+  capital = STATE_NEW_SOUTH_WALES
+  # No Religion
+}
+
+NZL = {
+  color = rgb { 90 250 127 }
+  country_type = colonial
+  tier = principality
+  cultures = { australian }
+  capital = STATE_NORTH_ISLAND
+  # No Religion
+}
+
+TAS = {
+  color = rgb { 224 194 152 }
+  country_type = colonial
+  tier = principality
+  cultures = { australian }
+  capital = STATE_VICTORIA
+  # No Religion
+}
+
+DEI = {
+  color = rgb { 20 80 80 }
+  country_type = colonial
+  tier = principality
+  cultures = { dutch }
+  capital = STATE_WEST_JAVA
+  # No Religion
+}
+
+SAK = {
+  color = rgb { 21 196 68 }
+  country_type = unrecognized
+  tier = principality
+  cultures = { sumatran }
+  capital = STATE_NORTH_SUMATRA
+  # No Religion
+}
+
+PON = {
+  color = rgb { 255 102 102 }
+  country_type = unrecognized
+  tier = principality
+  cultures = { bornean }
+  capital = STATE_WEST_BORNEO
+  # No Religion
+}
+
+SMB = {
+  color = rgb { 102 102 255 }
+  country_type = unrecognized
+  tier = principality
+  cultures = { bornean }
+  capital = STATE_WEST_BORNEO
+  # No Religion
+}
+
+JMB = {
+  color = rgb { 223 228 192 }
+  country_type = unrecognized
+  tier = principality
+  cultures = { sumatran }
+  capital = STATE_NORTH_SUMATRA
+  # No Religion
+}
+
+YOG = {
+  color = rgb { 201 28 54 }
+  country_type = unrecognized
+  tier = principality
+  cultures = { javan }
+  capital = STATE_CENTRAL_JAVA
+  # No Religion
+}
+
+SRK = {
+  color = rgb { 239 51 64 }
+  country_type = unrecognized
+  tier = principality
+  cultures = { javan }
+  capital = STATE_CENTRAL_JAVA
+  # No Religion
+}
+
+BTN = {
+  color = rgb { 209 203 31 }
+  country_type = unrecognized
+  tier = principality
+  cultures = { moluccan }
+  capital = STATE_CELEBES
+  # No Religion
+}
+
+SEL = {
+  color = rgb { 249 215 61 }
+  country_type = unrecognized
+  tier = principality
+  cultures = { malay }
+  capital = STATE_MALAYA
+  # No Religion
+}
+
+PRK = {
+  color = rgb { 76 122 117 }
+  country_type = unrecognized
+  tier = principality
+  cultures = { malay }
+  capital = STATE_MALAYA
+  # No Religion
+}
+
+SUL = {
+  color = rgb { 89 164 144 }
+  country_type = unrecognized
+  tier = principality
+  cultures = { moro }
+  capital = STATE_MINDANAO
+  # No Religion
+}
+
+SLW = {
+  color = rgb { 153 0 0 }
+  country_type = decentralized
+  tier = principality
+  cultures = { moluccan }
+  capital = STATE_CELEBES
+  # No Religion
+}
+
+TID = {
+  color = rgb { 176 232 64 }
+  country_type = unrecognized
+  tier = principality
+  cultures = { moluccan }
+  capital = STATE_MOLUCCAS
+  # No Religion
+}
+
+STG = {
+  color = rgb { 255 255 0 }
+  country_type = unrecognized
+  tier = principality
+  cultures = { bornean }
+  capital = STATE_WEST_BORNEO
+  # No Religion
+}
+
+BNJ = {
+  color = rgb { 171 175 40 }
+  country_type = unrecognized
+  tier = principality
+  cultures = { bornean }
+  capital = STATE_EAST_BORNEO
+  # No Religion
+}
+
+IDN = {
+  color = rgb { 0 128 128 }
+  country_type = recognized
+  tier = empire
+  cultures = { balinese batak bornean dayak javan malay moluccan sumatran }
+  capital = STATE_WEST_JAVA
+  # No Religion
+}
+
+MGD = {
+  color = rgb { 119 32 29 }
+  country_type = unrecognized
+  tier = principality
+  cultures = { moro }
+  capital = STATE_MINDANAO
+  # No Religion
+}

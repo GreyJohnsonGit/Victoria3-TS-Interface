@@ -1,5 +1,16 @@
-use crate::value_reader_ext::Color;
+use crate::color::Color;
 use super::country_definition::CountryDefinition;
+
+pub trait ICountryDefinitionBuilder {
+  fn with_tag(&mut self, tag: String) -> &mut Self;
+  fn with_cultures(&mut self, cultures: Vec<String>) -> &mut Self;
+  fn with_color(&mut self, color: Color) -> &mut Self;
+  fn with_country_type(&mut self, country_type: String) -> &mut Self;
+  fn with_tier(&mut self, tier: String) -> &mut Self;
+  fn with_religion(&mut self, religion: Option<String>) -> &mut Self;
+  fn with_capital(&mut self, capital: Option<String>) -> &mut Self;
+  fn build(&self) -> CountryDefinition;
+}
 
 #[derive(Debug)]
 pub struct CountryDefinitionBuilder {

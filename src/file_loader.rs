@@ -1,28 +1,40 @@
 use crate::config::IConfig;
-use crate::mod_builder::{IModBuilder, ModBuilder};
+use crate::country_definition::country_definition_factory::ICountryDefinitionFactory;
+use crate::mod_builder::ModBuilder;
+use crate::mod_state::{IModState, ModState};
 use std::fs;
 use std::path::Path;
 use crate::country_definition::country_definition::CountryDefinition;
 
 pub trait IFileLoader {
-  fn load_vanilla(&self) -> Result<bool, String>;
+  fn load_vanilla(&mut self) -> Result<bool, String>;
   fn load_pdx(&self) -> Result<bool, String>;
   fn load_json(&self) -> Result<bool, String>;
-  fn create_mod_builder(&self) -> Box<dyn IModBuilder>;
+  fn create_mod_builder(self) -> Box<ModBuilder>;
 }
 
-pub struct FileLoader {
-  config: Box<dyn IConfig>,
+pub struct FileLoader<'a> {
+  config: &'a Box<dyn IConfig>,
+  country_definition_factory: &'a Box<dyn ICountryDefinitionFactory>,
+  mod_state: Option<Box<dyn IModState>>
 }
 
-impl FileLoader {
-  pub fn new(config: Box<dyn IConfig>) -> FileLoader {
-    return FileLoader { config }
+impl FileLoader<'_> {
+  pub fn new<'a>(
+    config: &'a Box<dyn IConfig>,
+    country_definition_factory: &'a Box<dyn ICountryDefinitionFactory>,
+  ) -> FileLoader<'a> {
+    let mod_state: Box<dyn IModState> = Box::from(ModState::new());
+    return FileLoader { 
+      config, 
+      country_definition_factory,
+      mod_state: Some(mod_state)
+    }
   }
 }
 
-impl IFileLoader for FileLoader {
-  fn load_vanilla(&self) -> Result<bool, String> {
+impl IFileLoader for FileLoader<'_> {
+  fn load_vanilla(&mut self) -> Result<bool, String> {
     let path_string = self.config.get_vanilla_path();
     let path = Path::new(&path_string);
     
@@ -30,17 +42,42 @@ impl IFileLoader for FileLoader {
       return Err(format!("Vanilla path {} does not exist!", path.display()));
     }
 
-    { let path_extension = "common/country_definitions";
+    { let path_extension = "common\\country_definitions";
       let path = path.join(path_extension);
-      let files = match fs::read_dir(path.clone()) {
+      let directory = match fs::read_dir(path.clone()) {
         Err(e) => return Err(format!("{} @ {}", e, path.to_str().unwrap())),
         Ok(files) => files,
       };
 
-      for file in files {
-        if let Ok(file) = file {
-          let text = fs::read_to_string(file.path()).unwrap();
-          let country_definitions = CountryDefinition::from_pdx(text);
+      for entry in directory {
+        if let Ok(entry) = entry {
+          let file_path = entry.path();
+          let file_path_str = file_path.to_str().unwrap_or("No Path");
+          let file_text = fs::read_to_string(file_path.clone()).unwrap();
+          
+          let definitions = CountryDefinition::from_pdx(
+            file_text, 
+            &self.country_definition_factory
+          );
+
+          let definitions = match definitions {
+            Err(e) => {
+              println!("{} @ {}", e, file_path_str);
+              continue;
+            },
+            Ok(d) => d,
+          };
+
+          self.mod_state.as_mut().map(|state| {
+            let file_name = Path::file_name(&file_path)
+              .map(|file_name| file_name.to_str())
+              .flatten()
+              .unwrap_or("no_file_name.txt");
+            state.add_file(
+              String::from(file_name), 
+              definitions
+            )
+          });
         }
       }
     };
@@ -61,14 +98,18 @@ impl IFileLoader for FileLoader {
     return Ok(true);
   }
   
-  fn create_mod_builder(&self) -> Box<dyn IModBuilder> {
-    return Box::from(ModBuilder::new(self.config.clone_box()));
+  fn create_mod_builder(mut self) -> Box<ModBuilder> {
+    let mod_state = std::mem::take(&mut self.mod_state);
+    let config = self.config.clone_box();
+    let mod_builder = ModBuilder::new(config, mod_state.unwrap());
+
+    Box::from(mod_builder)
   }
 }
 
 #[cfg(test)]
 mod tests {
-  use crate::config::MockIConfig;
+  use crate::{config::MockIConfig, country_definition::country_definition_factory::CountryDefinitionFactory};
   use super::*;
 
   #[test]
@@ -82,8 +123,11 @@ mod tests {
     config.expect_get_vanilla_path()
       .returning(move || path.clone());
 
-    let loader = FileLoader::new(
-      Box::from(config)
+    let config: Box<dyn IConfig> = Box::from(config);
+    let factory = CountryDefinitionFactory::new_boxed();
+    let mut loader = FileLoader::new(
+      &config,
+      &factory
     );
 
     // Act
@@ -102,13 +146,16 @@ mod tests {
       .path().join("does_not_exist")
       .to_string_lossy().into();
 
-    let mut config = MockIConfig::new();
-    config.expect_get_vanilla_path()
-      .returning(move || path.clone());
-
-    let loader = FileLoader::new(
-      Box::from(config)
-    );
+      let mut config = MockIConfig::new();
+      config.expect_get_vanilla_path()
+        .returning(move || path.clone());
+  
+      let config: Box<dyn IConfig> = Box::from(config);
+      let factory = CountryDefinitionFactory::new_boxed();
+      let mut loader = FileLoader::new(
+        &config,
+        &factory
+      );
 
     // Act
     let result = loader.load_vanilla();
