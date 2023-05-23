@@ -1,8 +1,7 @@
 use std::error::Error;
-use chrono::format::format;
 use jomini::{TextTape, text::ValueReader, Windows1252Encoding};
-use crate::value_reader_ext::IValueReaderExt;
-use super::{country_definition_builder::CountryDefinitionBuilder, country_definition_factory::ICountryDefinitionFactory};
+use crate::{value_reader_ext::IValueReaderExt, builder_factory::IBuilderFactory};
+use super::country_definition_builder::ICountryDefinitionBuilder;
 use crate::color::Color;
 
 pub trait ICountryDefinition {
@@ -59,7 +58,7 @@ impl CountryDefinition {
   
   pub fn from_pdx(
     text: String,
-    factory: &Box<dyn ICountryDefinitionFactory>
+    factory: &Box<dyn IBuilderFactory>
   ) -> Result<Vec<Box<dyn ICountryDefinition>>, Box<dyn Error>> {
     let tape = match TextTape::from_slice(text.as_bytes()) {
       Err(e) => return Err(Box::from(e)),
@@ -71,8 +70,8 @@ impl CountryDefinition {
     let mut definitions: Vec<Box<dyn ICountryDefinition>> = vec![];
     
     for (tag, _, inner) in reader.fields() {
-      let mut builder = factory.create_builder();
-      builder.tag = Some(tag.read_string());
+      let mut builder = factory.country_definition_builder();
+      builder.set_tag(tag.read_string());
       
       let definition = match inner.read_object() {
         Err(e) => return Err(Box::from(e)),
@@ -87,7 +86,7 @@ impl CountryDefinition {
         );
       }
       
-      definitions.push(Box::from(builder.build()));
+      definitions.push(builder.build());
     }
     
     return Ok(definitions);
@@ -96,15 +95,27 @@ impl CountryDefinition {
   fn token_lookup<'a>(
     token: &str, 
     value: ValueReader<Windows1252Encoding>, 
-    builder: &'a mut CountryDefinitionBuilder
+    builder: &'a mut Box<dyn ICountryDefinitionBuilder>
   ) {
     match token {
-      "country_type" => builder.country_type = Some(value.read_string().unwrap()),
-      "tier" => builder.tier = Some(value.read_string().unwrap()),
-      "color" => builder.color = Some(value.read_color().unwrap()),
-      "cultures" => builder.cultures = Some(value.read_string_array().unwrap()),
-      "religion" => builder.religion = Some(value.read_string().unwrap()),
-      "capital" => builder.capital = Some(value.read_string().unwrap()),
+      "country_type" => {
+        builder.set_country_type(value.read_string().unwrap());
+      },
+      "tier" => {
+        builder.set_tier(value.read_string().unwrap());
+      },
+      "color" => {
+        builder.set_color(value.read_color().unwrap());
+      },
+      "cultures" => {
+        builder.set_cultures(value.read_string_array().unwrap());
+      },
+      "religion" => {
+        builder.set_religion(Some(value.read_string().unwrap()));
+      },
+      "capital" => {
+        builder.set_capital(Some(value.read_string().unwrap()));
+      },
       _ => ()
     }
   }
@@ -163,7 +174,7 @@ r#"{} = {{
 
 #[cfg(test)]
 mod test {
-  use crate::{color::Color::*, country_definition::{country_definition_factory::CountryDefinitionFactory, country_definition::ICountryDefinition}};
+  use crate::{color::Color::*, country_definition::{country_definition::ICountryDefinition}, builder_factory::BuilderFactory};
   use super::CountryDefinition;
   
   #[test]
@@ -191,7 +202,7 @@ mod test {
         capital: Some("STATE_HOME_COUNTIES".to_string())
       });
 
-      let factory = CountryDefinitionFactory::new_boxed();
+      let factory = BuilderFactory::new_boxed();
       
       // Act
       let result = CountryDefinition::from_pdx(data, &factory);

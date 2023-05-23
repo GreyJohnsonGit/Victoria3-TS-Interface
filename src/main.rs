@@ -1,4 +1,4 @@
-use vicky::country_definition::country_definition_factory::CountryDefinitionFactory;
+use vicky::builder_factory::BuilderFactory;
 use vicky::file_loader::{FileLoader, IFileLoader};
 use vicky::config::{Config, IConfig};
 use vicky::mod_builder::IModBuilder;
@@ -11,23 +11,21 @@ fn main() {
     String::from(".\\mod"),
     String::from(".\\cache")
   ));
-  let country_definition_factory = CountryDefinitionFactory::new_boxed();
+  
+  let builder_factory = BuilderFactory::new_boxed();
 
   let mut filer_loader = FileLoader::new(
     &config,
-    &country_definition_factory
+    &builder_factory
   );
 
-  if filer_loader.load_vanilla().is_err() {
-    panic!("Failed to load vanilla files!");
-  }
-
-  if filer_loader.load_pdx().is_err() {
-    panic!("Failed to load pdx files!");
-  }
-
-  if filer_loader.load_json().is_err() {
-    panic!("Failed to load json files!");
+  let load_result = Ok(())
+    .and(filer_loader.load_vanilla())
+    .and(filer_loader.load_pdx())
+    .and(filer_loader.load_json());
+  
+  if let Err(e) = load_result {
+    panic!("Failed to load files! Error: {}", e);
   }
 
   let mod_builder = filer_loader.create_mod_builder();

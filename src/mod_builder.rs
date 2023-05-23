@@ -50,6 +50,20 @@ impl IModBuilder for ModBuilder {
       }
     }
 
+    println!("Saving `Culture` files"); {
+      let culture_path = mod_path.join("common\\cultures");
+      fs::create_dir_all(&culture_path).ok();
+      for (file_name, cultures) in self.mod_state.get_cultures() {
+        let file_path = culture_path.join(file_name);
+        let contents = cultures
+          .iter()
+          .map(|culture| culture.as_pdx())
+          .collect::<Vec<String>>()
+          .join("\n\n");
+        fs::write(file_path, contents).ok();
+      }
+    }
+
     println!("Saving mod files to {}...", mod_path_string);
     return Ok(true);
   }

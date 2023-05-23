@@ -25,7 +25,15 @@ impl IValueReaderExt for ValueReader<'_, '_, Windows1252Encoding> {
 
     // { Scalar, Scalar, Scalar }
     if values.len() == 3 {
-      return read_rgb(&mut values);
+      let is_rgb = values.first()
+        .map(|v| v.read_scalar().ok()).flatten()
+        .map(|s| s.to_u64().ok()).flatten()
+        .is_some();
+
+      return match is_rgb {
+        true => read_rgb(&mut values),
+        false => read_hsv(&mut values),
+      };
     }
 
     // Format { Scalar, Scalar, Scalar }

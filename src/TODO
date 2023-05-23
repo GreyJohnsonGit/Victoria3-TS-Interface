@@ -1,3 +1,2 @@
-Create JSON Saver for CountryDefinition
-Create JSON Loader for CountryDefinition
-Create PDX Saver for CountryDefinition
+Add appropriate optional values to cultures
+Add culture/country definition validation

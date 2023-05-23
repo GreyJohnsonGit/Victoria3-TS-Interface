@@ -1,15 +1,14 @@
 use crate::color::Color;
-use super::country_definition::CountryDefinition;
-
+use super::country_definition::{CountryDefinition, ICountryDefinition};
 pub trait ICountryDefinitionBuilder {
-  fn with_tag(&mut self, tag: String) -> &mut Self;
-  fn with_cultures(&mut self, cultures: Vec<String>) -> &mut Self;
-  fn with_color(&mut self, color: Color) -> &mut Self;
-  fn with_country_type(&mut self, country_type: String) -> &mut Self;
-  fn with_tier(&mut self, tier: String) -> &mut Self;
-  fn with_religion(&mut self, religion: Option<String>) -> &mut Self;
-  fn with_capital(&mut self, capital: Option<String>) -> &mut Self;
-  fn build(&self) -> CountryDefinition;
+  fn set_tag(&mut self, tag: String) -> Option<String>;
+  fn set_cultures(&mut self, cultures: Vec<String>) -> Option<Vec<String>>;
+  fn set_color(&mut self, color: Color) -> Option<Color>;
+  fn set_country_type(&mut self, country_type: String) -> Option<String>;
+  fn set_tier(&mut self, tier: String) -> Option<String>;
+  fn set_religion(&mut self, religion: Option<String>) -> Option<String>;
+  fn set_capital(&mut self, capital: Option<String>) -> Option<String>;
+  fn build(self: Box<Self>) -> Box<dyn ICountryDefinition>;
 }
 
 #[derive(Debug)]
@@ -35,9 +34,11 @@ impl CountryDefinitionBuilder {
       capital: None
     }
   }
+}
 
-  pub fn build(self) -> CountryDefinition {
-    CountryDefinition::new(
+impl ICountryDefinitionBuilder for CountryDefinitionBuilder {
+  fn build(self: Box<Self>) -> Box<dyn ICountryDefinition> {
+    Box::new(CountryDefinition::new(
       self.tag.unwrap(),
       self.cultures.unwrap(),
       self.color.unwrap(),
@@ -45,6 +46,34 @@ impl CountryDefinitionBuilder {
       self.tier.unwrap(),
       self.religion,
       self.capital
-    )
+    ))
+  }
+  
+  fn set_tag(&mut self, tag: String) -> Option<String> {
+    std::mem::replace(&mut self.tag, Some(tag))
+  }
+  
+  fn set_cultures(&mut self, cultures: Vec<String>) -> Option<Vec<String>> {
+    std::mem::replace(&mut self.cultures, Some(cultures))
+  }
+  
+  fn set_color(&mut self, color: Color) -> Option<Color> {
+    std::mem::replace(&mut self.color, Some(color))
+  }
+  
+  fn set_country_type(&mut self, country_type: String) -> Option<String> {
+    std::mem::replace(&mut self.country_type, Some(country_type))
+  }
+  
+  fn set_tier(&mut self, tier: String) -> Option<String> {
+    std::mem::replace(&mut self.tier, Some(tier))
+  }
+  
+  fn set_religion(&mut self, religion: Option<String>) -> Option<String> {
+    std::mem::replace(&mut self.religion, religion)
+  }
+  
+  fn set_capital(&mut self, capital: Option<String>) -> Option<String> {
+    std::mem::replace(&mut self.capital, capital)
   }
 }
