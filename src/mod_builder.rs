@@ -1,8 +1,8 @@
 use std::{path::Path, fs, ops::Not};
-use crate::{config::IConfig, mod_state::IModState};
+use crate::{config::IConfig, mod_state::IModState, mod_validator::mod_validator::IModValidator};
 
 pub trait IModBuilder {
-  fn validate(&self) -> Result<bool, String>;
+  fn validate(&self, validator: Box<dyn IModValidator>) -> Result<(), String>;
   fn save(&self) -> Result<bool, String>;
 }
 
@@ -12,15 +12,24 @@ pub struct ModBuilder {
 }
 
 impl ModBuilder {
-  pub fn new(config: Box<dyn IConfig>, mod_state: Box<dyn IModState>) -> ModBuilder {
+  pub fn new(
+    config: Box<dyn IConfig>, 
+    mod_state: Box<dyn IModState>,
+  ) -> ModBuilder {
     ModBuilder { config, mod_state }
   }
 }
 
 impl IModBuilder for ModBuilder {
-  fn validate(&self) -> Result<bool, String> {
-    println!("Validating mod files...");    
-    return Ok(true);
+  fn validate(&self, validator: Box<dyn IModValidator>) -> Result<(), String> {
+    println!("Validating mod files...");
+    
+    Ok(())
+      .and(validator.cultures_are_defined(&self.mod_state))
+      .and(validator.no_duplicate_tags(&self.mod_state))
+      .map_err(|errors| {
+        format!("{}", errors.join("\n"))
+      })
   }
   
   fn save(&self) -> Result<bool, String> {
@@ -39,7 +48,7 @@ impl IModBuilder for ModBuilder {
     println!("Saving `Country Definition` files"); {
       let country_definition_path = mod_path.join("common\\country_definitions");
       fs::create_dir_all(&country_definition_path).ok();
-      for (file_name, definitions) in self.mod_state.get_country_definitions() {
+      for (file_name, definitions) in self.mod_state.get_country_definition_files() {
         let file_path = country_definition_path.join(file_name);
         let contents = definitions
           .iter()
@@ -53,7 +62,7 @@ impl IModBuilder for ModBuilder {
     println!("Saving `Culture` files"); {
       let culture_path = mod_path.join("common\\cultures");
       fs::create_dir_all(&culture_path).ok();
-      for (file_name, cultures) in self.mod_state.get_cultures() {
+      for (file_name, cultures) in self.mod_state.get_culture_files() {
         let file_path = culture_path.join(file_name);
         let contents = cultures
           .iter()

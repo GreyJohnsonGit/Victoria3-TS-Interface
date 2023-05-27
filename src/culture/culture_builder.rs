@@ -1,5 +1,3 @@
-use std::vec;
-
 use crate::color::Color;
 use super::culture::{ICulture, Culture};
 
@@ -130,18 +128,18 @@ impl ICultureBuilder for CultureBuilder {
   fn build(self: Box<Self>) -> Box<dyn ICulture> {
     Box::from(Culture::new(
       self.string_id.unwrap(),
-      self.color.unwrap_or(Color::RGB(0, 0, 0)), 
-      self.religion.unwrap_or("catholic".to_string()), 
       self.traits.unwrap(), 
-      self.male_common_first_names.unwrap_or(Vec::new()), 
-      self.female_common_first_names.unwrap_or(Vec::new()), 
-      self.common_last_names.unwrap_or(Vec::new()), 
-      self.noble_last_names.unwrap_or(Vec::new()), 
-      self.male_regal_first_names.unwrap_or(Vec::new()), 
-      self.female_regal_first_names.unwrap_or(Vec::new()), 
-      self.regal_last_names.unwrap_or(Vec::new()), 
       self.ethnicities.unwrap(), 
-      self.graphics.unwrap()
+      self.graphics.unwrap(),
+      self.color, 
+      self.religion, 
+      self.male_common_first_names, 
+      self.female_common_first_names, 
+      self.common_last_names, 
+      self.noble_last_names, 
+      self.male_regal_first_names, 
+      self.female_regal_first_names, 
+      self.regal_last_names, 
     ))
   }
 }

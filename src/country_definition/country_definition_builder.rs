@@ -1,11 +1,11 @@
-use crate::color::Color;
+use crate::{color::Color, country_tier::CountryTier};
 use super::country_definition::{CountryDefinition, ICountryDefinition};
 pub trait ICountryDefinitionBuilder {
   fn set_tag(&mut self, tag: String) -> Option<String>;
   fn set_cultures(&mut self, cultures: Vec<String>) -> Option<Vec<String>>;
   fn set_color(&mut self, color: Color) -> Option<Color>;
   fn set_country_type(&mut self, country_type: String) -> Option<String>;
-  fn set_tier(&mut self, tier: String) -> Option<String>;
+  fn set_tier(&mut self, tier: CountryTier) -> Option<CountryTier>;
   fn set_religion(&mut self, religion: Option<String>) -> Option<String>;
   fn set_capital(&mut self, capital: Option<String>) -> Option<String>;
   fn build(self: Box<Self>) -> Box<dyn ICountryDefinition>;
@@ -17,7 +17,7 @@ pub struct CountryDefinitionBuilder {
   pub cultures: Option<Vec<String>>,
   pub color: Option<Color>,
   pub country_type: Option<String>,
-  pub tier: Option<String>,
+  pub tier: Option<CountryTier>,
   pub religion: Option<String>,
   pub capital: Option<String>
 }
@@ -65,7 +65,7 @@ impl ICountryDefinitionBuilder for CountryDefinitionBuilder {
     std::mem::replace(&mut self.country_type, Some(country_type))
   }
   
-  fn set_tier(&mut self, tier: String) -> Option<String> {
+  fn set_tier(&mut self, tier: CountryTier) -> Option<CountryTier> {
     std::mem::replace(&mut self.tier, Some(tier))
   }
   

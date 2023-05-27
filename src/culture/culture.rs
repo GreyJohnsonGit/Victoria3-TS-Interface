@@ -1,35 +1,21 @@
 use jomini::{TextTape, text::ValueReader, Windows1252Encoding};
-use crate::{color::Color, builder_factory::IBuilderFactory, value_reader_ext::IValueReaderExt};
+use crate::{color::Color, builder_factory::IBuilderFactory, value_reader_ext::IValueReaderExt, define_get_and_set, declare_get_and_set};
 use super::culture_builder::ICultureBuilder;
 
 pub trait ICulture {
-  fn string_id(&self) -> String;
-  fn color(&self) -> Color;
-  fn religion(&self) -> String;
-  fn traits(&self) -> Vec<String>;
-  fn male_common_first_names(&self) -> Vec<String>;
-  fn female_common_first_names(&self) -> Vec<String>;
-  fn common_last_names(&self) -> Vec<String>;
-  fn noble_last_names(&self) -> Vec<String>;
-  fn male_regal_first_names(&self) -> Vec<String>;
-  fn female_regal_first_names(&self) -> Vec<String>;
-  fn regal_last_names(&self) -> Vec<String>;
-  fn ethnicities(&self) -> Vec<String>;
-  fn graphics(&self) -> String;
-  
-  fn set_string_id(&mut self, string_id: String);
-  fn set_color(&mut self, color: Color);
-  fn set_religion(&mut self, religion: String);
-  fn set_traits(&mut self, traits: Vec<String>);
-  fn set_male_common_first_names(&mut self, names: Vec<String>);
-  fn set_female_common_first_names(&mut self, names: Vec<String>);
-  fn set_common_last_names(&mut self, names: Vec<String>);
-  fn set_noble_last_names(&mut self, names: Vec<String>);
-  fn set_male_regal_first_names(&mut self, names: Vec<String>);
-  fn set_female_regal_first_names(&mut self, names: Vec<String>);
-  fn set_regal_last_names(&mut self, names: Vec<String>);
-  fn set_ethnicities(&mut self, ethnicities: Vec<String>);
-  fn set_graphics(&mut self, graphics: String);
+  declare_get_and_set!(string_id, set_string_id, String);
+  declare_get_and_set!(traits, set_traits, Vec<String>);
+  declare_get_and_set!(ethnicities, set_ethnicities, Vec<String>);
+  declare_get_and_set!(graphics, set_graphics, String);
+  declare_get_and_set!(color, set_color, Option<Color>);
+  declare_get_and_set!(religion, set_religion, Option<String>);
+  declare_get_and_set!(male_common_first_names, set_male_common_first_names, Option<Vec<String>>);
+  declare_get_and_set!(female_common_first_names, set_female_common_first_names, Option<Vec<String>>);
+  declare_get_and_set!(common_last_names, set_common_last_names, Option<Vec<String>>);
+  declare_get_and_set!(noble_last_names, set_noble_last_names, Option<Vec<String>>);
+  declare_get_and_set!(male_regal_first_names, set_male_regal_first_names, Option<Vec<String>>);
+  declare_get_and_set!(female_regal_first_names, set_female_regal_first_names, Option<Vec<String>>);
+  declare_get_and_set!(regal_last_names, set_regal_last_names, Option<Vec<String>>);
   
   fn as_pdx(&self) -> String;
 }
@@ -37,41 +23,43 @@ pub trait ICulture {
 #[derive(PartialEq, Debug)]
 pub struct Culture {
   string_id: String,
-  color: Color,
-  religion: String,
   traits: Vec<String>,
-  male_common_first_names: Vec<String>,
-  female_common_first_names: Vec<String>,
-  common_last_names: Vec<String>,
-  noble_last_names: Vec<String>,
-  male_regal_first_names: Vec<String>,
-  female_regal_first_names: Vec<String>,
-  regal_last_names: Vec<String>,
   ethnicities: Vec<String>,
   graphics: String,
+  color: Option<Color>,
+  religion: Option<String>,
+  male_common_first_names: Option<Vec<String>>,
+  female_common_first_names: Option<Vec<String>>,
+  common_last_names: Option<Vec<String>>,
+  noble_last_names: Option<Vec<String>>,
+  male_regal_first_names: Option<Vec<String>>,
+  female_regal_first_names: Option<Vec<String>>,
+  regal_last_names: Option<Vec<String>>,
 }
 
 impl Culture {
   pub fn new(
     string_id: String,
-    color: Color,
-    religion: String,
     traits: Vec<String>,
-    male_common_first_names: Vec<String>,
-    female_common_first_names: Vec<String>,
-    common_last_names: Vec<String>,
-    noble_last_names: Vec<String>,
-    male_regal_first_names: Vec<String>,
-    female_regal_first_names: Vec<String>,
-    regal_last_names: Vec<String>,
     ethnicities: Vec<String>,
     graphics: String,
+    color: Option<Color>,
+    religion: Option<String>,
+    male_common_first_names: Option<Vec<String>>,
+    female_common_first_names: Option<Vec<String>>,
+    common_last_names: Option<Vec<String>>,
+    noble_last_names: Option<Vec<String>>,
+    male_regal_first_names: Option<Vec<String>>,
+    female_regal_first_names: Option<Vec<String>>,
+    regal_last_names: Option<Vec<String>>,
   ) -> Culture {
     return Culture {
       string_id,
+      traits,
+      ethnicities,
+      graphics,
       color,
       religion,
-      traits,
       male_common_first_names,
       female_common_first_names,
       common_last_names,
@@ -79,11 +67,9 @@ impl Culture {
       male_regal_first_names,
       female_regal_first_names,
       regal_last_names,
-      ethnicities,
-      graphics,
     }
   }
-
+  
   pub fn from_pdx(
     text: String,
     factory: &Box<dyn IBuilderFactory>
@@ -119,7 +105,7 @@ impl Culture {
     
     return Ok(cultures);
   }
-
+  
   fn token_lookup<'a>(
     token: &str, 
     value: ValueReader<Windows1252Encoding>, 
@@ -149,10 +135,10 @@ impl Culture {
       },
       "ethnicities" => {
         let ethnicities = value
-          .read_object().unwrap()
-          .fields()
-          .map(|(_, _, ethnicity)| ethnicity.read_string())
-          .flatten();
+        .read_object().unwrap()
+        .fields()
+        .map(|(_, _, ethnicity)| ethnicity.read_string())
+        .flatten();
         builder.set_ethnicities(ethnicities.collect());
       },
       "graphics" => {
@@ -163,131 +149,88 @@ impl Culture {
   }
 }
 
+
+
 impl ICulture for Culture {
-  fn string_id(&self) -> String { self.string_id.clone() }
-  fn color(&self) -> Color { self.color.clone() }
-  fn religion(&self) -> String { self.religion.clone() }
-  fn traits(&self) -> Vec<String> { self.traits.clone() }
-  fn ethnicities(&self) -> Vec<String> { self.ethnicities.clone() }
-  fn graphics(&self) -> String { self.graphics.clone() }
-  
-  fn male_common_first_names(&self) -> Vec<String> {
-    self.male_common_first_names.clone()
-  }
-  
-  fn female_common_first_names(&self) -> Vec<String> {
-    self.female_common_first_names.clone()
-  }
-  
-  fn common_last_names(&self) -> Vec<String> {
-    self.common_last_names.clone()
-  }
-  
-  fn noble_last_names(&self) -> Vec<String> {
-    self.noble_last_names.clone()
-  }
-  
-  fn male_regal_first_names(&self) -> Vec<String> {
-    self.male_regal_first_names.clone()
-  }
-  
-  fn female_regal_first_names(&self) -> Vec<String> {
-    self.female_regal_first_names.clone()
-  }
-  
-  fn regal_last_names(&self) -> Vec<String> {
-    self.regal_last_names.clone()
-  }
-  
-  fn set_string_id(&mut self, string_id: String) {
-    self.string_id = string_id;
-  }
-  
-  fn set_color(&mut self, color: Color) {
-    self.color = color;
-  }
-  
-  fn set_religion(&mut self, religion: String) {
-    self.religion = religion;
-  }
-  
-  fn set_traits(&mut self, traits: Vec<String>) {
-    self.traits = traits;
-  }
-  
-  fn set_male_common_first_names(&mut self, names: Vec<String>) {
-    self.male_common_first_names = names;
-  }
-  
-  fn set_female_common_first_names(&mut self, names: Vec<String>) {
-    self.female_common_first_names = names;
-  }
-  
-  fn set_common_last_names(&mut self, names: Vec<String>) {
-    self.common_last_names = names;
-  }
-  
-  fn set_noble_last_names(&mut self, names: Vec<String>) {
-    self.noble_last_names = names;
-  }
-  
-  fn set_male_regal_first_names(&mut self, names: Vec<String>) {
-    self.male_regal_first_names = names;
-  }
-  
-  fn set_female_regal_first_names(&mut self, names: Vec<String>) {
-    self.female_regal_first_names = names;
-  }
-  
-  fn set_regal_last_names(&mut self, names: Vec<String>) {
-    self.regal_last_names = names;
-  }
-  
-  fn set_ethnicities(&mut self, ethnicities: Vec<String>) {
-    self.ethnicities = ethnicities;
-  }
-  
-  fn set_graphics(&mut self, graphics: String) {
-    self.graphics = graphics;
-  }
+  define_get_and_set!(string_id, set_string_id, String);
+  define_get_and_set!(traits, set_traits, Vec<String>);
+  define_get_and_set!(ethnicities, set_ethnicities, Vec<String>);
+  define_get_and_set!(graphics, set_graphics, String);
+  define_get_and_set!(color, set_color, Option<Color>);
+  define_get_and_set!(religion, set_religion, Option<String>);
+  define_get_and_set!(male_common_first_names, set_male_common_first_names, Option<Vec<String>>);
+  define_get_and_set!(female_common_first_names, set_female_common_first_names, Option<Vec<String>>);
+  define_get_and_set!(common_last_names, set_common_last_names, Option<Vec<String>>);
+  define_get_and_set!(noble_last_names, set_noble_last_names, Option<Vec<String>>);
+  define_get_and_set!(male_regal_first_names, set_male_regal_first_names, Option<Vec<String>>);
+  define_get_and_set!(female_regal_first_names, set_female_regal_first_names, Option<Vec<String>>);
+  define_get_and_set!(regal_last_names, set_regal_last_names, Option<Vec<String>>);
   
   fn as_pdx(&self) -> String {
-    let to_ethnicity_entry = |e: String| format!("1 = {}", e); 
+    let color = self.color.clone().map(
+      |c| format!("color = {}", c.to_string())
+    ).unwrap_or("# No Color".to_string());
+    
+    let religion = self.religion.clone().map(
+      |r| format!("religion = {}", r)
+    ).unwrap_or("# No Religion".to_string());
+
+    let mcfn = self.male_common_first_names.clone().map(
+      |n| format!("male_common_first_names = {{ {} }}", n.join(" "))
+    ).unwrap_or("# No Male Common First Names".to_string());
+
+    let fcfn = self.female_common_first_names.clone().map(
+      |n| format!("female_common_first_names = {{ {} }}", n.join(" "))
+    ).unwrap_or("# No Female Common First Names".to_string());
+
+    let nln = self.noble_last_names.clone().clone().map(
+      |n| format!("noble_last_names = {{ {} }}", n.join(" "))
+    ).unwrap_or("# No Noble Last Names".to_string());
+
+    let cln = self.common_last_names.clone().map(
+      |n| format!("common_last_names = {{ {} }}", n.join(" "))
+    ).unwrap_or("# No Common Last Names".to_string());
+    
+    let mrfn = self.male_regal_first_names.clone().map(
+      |n| format!("male_regal_first_names = {{ {} }}", n.join(" "))
+    ).unwrap_or("# No Male Regal First Names".to_string());
+
+    let frfn = self.female_regal_first_names.clone().map(
+      |n| format!("female_regal_first_names = {{ {} }}", n.join(" "))
+    ).unwrap_or("# No Female Regal First Names".to_string());
+
+    let rln = self.regal_last_names.clone().map(
+      |n| format!("regal_last_names = {{ {} }}", n.join(" "))
+    ).unwrap_or("# No Regal Last Names".to_string());
+
+    let ethnicities = self.ethnicities
+      .clone().into_iter()
+      .map(|e| format!("1 = {}", e))
+      .collect::<Vec<String>>().join("");
 
     format!(
 r#"{} = {{
-  color = {}
-  religion = {}
+  {}
+  {}
   traits = {{ {} }}
-  male_common_first_names = {{ {} }}
-  female_common_first_names = {{ {} }}
-  noble_last_names = {{ {} }}
-  common_last_names = {{ {} }}
-  male_regal_first_names = {{ {} }}
-  female_regal_first_names = {{ {} }}
-  regal_last_names = {{ {} }}
+  {}
+  {}
+  {}
+  {}
+  {}
+  {}
+  {}
   ethnicities = {{ 
     {} 
   }}
   graphics = {}
 }}"#, 
       self.string_id.clone(),
-      self.color.clone().to_string(),
-      self.religion.clone(),
-      self.traits.join(" "),
-      self.male_common_first_names.join(" "),
-      self.female_common_first_names.join(" "),
-      self.noble_last_names.join(" "),
-      self.common_last_names.join(" "),
-      self.male_regal_first_names.join(" "),
-      self.female_regal_first_names.join(" "),
-      self.regal_last_names.join(" "),
-      self.ethnicities
-        .clone()
-        .into_iter()
-        .map(|e| to_ethnicity_entry(e))
-        .collect::<Vec<String>>()
-        .join(""),
+      color,
+      religion,
+      self.traits.clone().join(" "),
+      mcfn, fcfn, nln, cln, mrfn, frfn, rln,
+      ethnicities,
       self.graphics.clone()
     )
   }

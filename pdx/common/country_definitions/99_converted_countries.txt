@@ -4341,7 +4341,7 @@ OUA = {
 	color = { 113 95 122 }
 	country_type = decentralized
 	tier = principality
-	cultures = { maures }
+	cultures = { bidan }
 	capital = STATE_INNER_MAURITANIA
 }
 
@@ -5373,7 +5373,7 @@ C00 = {
 	color = { 114 61 71 }
 	country_type = decentralized
 	tier = principality
-	cultures = { maures }
+	cultures = { bidan }
 	capital = STATE_MAURITANIA
 }
 
@@ -6447,7 +6447,7 @@ TTL = {
 	color = { 153 240 182 }
 	country_type = recognized
 	tier = city_state
-	cultures = { swiss }
+	cultures = { alemannic }
 	religion = catholic
 	capital = STATE_EAST_SWITZERLAND
 }
@@ -6918,7 +6918,7 @@ SWI = {
 	color = { 153 122 108 }
 	country_type = recognized
 	tier = kingdom
-	cultures = { swiss }
+	cultures = { alemannic }
 	religion = catholic
 	capital = STATE_WEST_SWITZERLAND
 }
@@ -8020,7 +8020,7 @@ TRZ = {
 	color = { 230 123 17 }
 	country_type = decentralized
 	tier = principality
-	cultures = { maures }
+	cultures = { bidan }
 	capital = STATE_MAURITANIA
 }
 
@@ -10773,7 +10773,7 @@ GNV = {
 	color = { 255 250 138 }
 	country_type = recognized
 	tier = city_state
-	cultures = { swiss }
+	cultures = { alemannic }
 	religion = catholic
 	capital = STATE_SAVOY
 }

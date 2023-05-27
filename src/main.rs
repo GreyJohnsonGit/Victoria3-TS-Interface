@@ -2,6 +2,7 @@ use vicky::builder_factory::BuilderFactory;
 use vicky::file_loader::{FileLoader, IFileLoader};
 use vicky::config::{Config, IConfig};
 use vicky::mod_builder::IModBuilder;
+use vicky::mod_validator::mod_validator::ModValidator;
 
 fn main() {
   let config: Box<dyn IConfig> = Box::from(Config::new(
@@ -30,8 +31,10 @@ fn main() {
 
   let mod_builder = filer_loader.create_mod_builder();
   
-  if mod_builder.validate().is_err() {
-    panic!("Failed to validate mod!");
+  let mod_validator = Box::new(ModValidator::new());
+  match mod_builder.validate(mod_validator) {
+    Ok(_) => println!("Mod is valid!"),
+    Err(e) => println!("Mod is invalid! Errors: \n{}", e)
   }
 
   if mod_builder.save().is_err() {

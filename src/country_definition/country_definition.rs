@@ -1,26 +1,18 @@
 use std::error::Error;
 use jomini::{TextTape, text::ValueReader, Windows1252Encoding};
-use crate::{value_reader_ext::IValueReaderExt, builder_factory::IBuilderFactory};
+use crate::{value_reader_ext::IValueReaderExt, builder_factory::IBuilderFactory, define_get_and_set, declare_get_and_set, country_tier::CountryTier};
 use super::country_definition_builder::ICountryDefinitionBuilder;
 use crate::color::Color;
 
-pub trait ICountryDefinition {
-  fn tag(&self) -> String;
-  fn cultures(&self) -> Vec<String>;
-  fn color(&self) -> Color;
-  fn country_type(&self) -> String;
-  fn tier(&self) -> String;
-  fn religion(&self) -> Option<String>;
-  fn capital(&self) -> Option<String>;
-  
-  fn set_tag(&mut self, tag: String);
-  fn set_cultures(&mut self, cultures: Vec<String>);
-  fn set_color(&mut self, color: Color);
-  fn set_country_type(&mut self, country_type: String);
-  fn set_tier(&mut self, tier: String);
-  fn set_religion(&mut self, religion: Option<String>);
-  fn set_capital(&mut self, capital: Option<String>);
 
+pub trait ICountryDefinition {
+  declare_get_and_set!(tag, set_tag, String);
+  declare_get_and_set!(cultures, set_cultures, Vec<String>);
+  declare_get_and_set!(color, set_color, Color);
+  declare_get_and_set!(country_type, set_country_type, String);
+  declare_get_and_set!(tier, set_tier, CountryTier);
+  declare_get_and_set!(religion, set_religion, Option<String>);
+  declare_get_and_set!(capital, set_capital, Option<String>);
   fn as_pdx(&self) -> String;
 }
 
@@ -30,7 +22,7 @@ pub struct CountryDefinition {
   cultures: Vec<String>,
   color: Color,
   country_type: String,
-  tier: String,
+  tier: CountryTier,
   religion: Option<String>,
   capital: Option<String>,
 }
@@ -41,7 +33,7 @@ impl CountryDefinition {
     cultures: Vec<String>, 
     color: Color, 
     country_type: String, 
-    tier: String, 
+    tier: CountryTier, 
     religion: Option<String>, 
     capital: Option<String>
   ) -> CountryDefinition {
@@ -102,7 +94,14 @@ impl CountryDefinition {
         builder.set_country_type(value.read_string().unwrap());
       },
       "tier" => {
-        builder.set_tier(value.read_string().unwrap());
+        let value_string = value
+          .read_string()
+          .unwrap_or("Undefined".to_string());
+
+        match CountryTier::from(&value_string) {
+          Some(tier) => { builder.set_tier(tier); },
+          None => println!("Invalid Country Tier: {}", value_string)
+        }
       },
       "color" => {
         builder.set_color(value.read_color().unwrap());
@@ -122,30 +121,13 @@ impl CountryDefinition {
 }
 
 impl ICountryDefinition for CountryDefinition {
-  fn tag(&self) -> String { self.tag.clone() }
-  fn cultures(&self) -> Vec<String> { self.cultures.clone() }
-  fn color(&self) -> Color { self.color.clone() }  
-  fn country_type(&self) -> String { self.country_type.clone() }
-  fn tier(&self) -> String { self.tier.clone() }
-  fn religion(&self) -> Option<String> { self.religion.clone() }
-  fn capital(&self) -> Option<String> { self.capital.clone() }
-
-  fn set_tag(&mut self, tag: String) { self.tag = tag; }
-  fn set_tier(&mut self, tier: String) { self.tier = tier; }
-  fn set_color(&mut self, color: Color) { self.color = color; }
-  fn set_capital(&mut self, capital: Option<String>) { self.capital = capital; }
-
-  fn set_cultures(&mut self, cultures: Vec<String>) {
-    self.cultures = cultures; 
-  }
-
-  fn set_country_type(&mut self, country_type: String) { 
-    self.country_type = country_type; 
-  }
-
-  fn set_religion(&mut self, religion: Option<String>) { 
-    self.religion = religion; 
-  }
+  define_get_and_set!(tag, set_tag, String);
+  define_get_and_set!(cultures, set_cultures, Vec<String>);
+  define_get_and_set!(color, set_color, Color);
+  define_get_and_set!(country_type, set_country_type, String);
+  define_get_and_set!(tier, set_tier, CountryTier);
+  define_get_and_set!(religion, set_religion, Option<String>);
+  define_get_and_set!(capital, set_capital, Option<String>);
 
   fn as_pdx(&self) -> String {
     format!(
@@ -160,8 +142,8 @@ r#"{} = {{
       self.tag.clone(), 
       self.color.clone().to_string(), 
       self.country_type.clone(), 
-      self.tier.clone(), 
-      self.cultures.join(" "),
+      self.tier.to_str().clone(), 
+      self.cultures.clone().join(" "),
       self.capital.clone()
         .map(|c| format!("capital = {c}"))
         .unwrap_or("# No Capital".to_string()),
@@ -174,7 +156,7 @@ r#"{} = {{
 
 #[cfg(test)]
 mod test {
-  use crate::{color::Color::*, country_definition::{country_definition::ICountryDefinition}, builder_factory::BuilderFactory};
+  use crate::{color::Color::*, country_definition::{country_definition::ICountryDefinition}, builder_factory::BuilderFactory, country_tier::CountryTier};
   use super::CountryDefinition;
   
   #[test]
@@ -197,7 +179,7 @@ mod test {
         cultures: vec!["british".to_string(), "scottish".to_string()],
         color: HSV(0.99, 0.7, 0.9),
         country_type: "recognized".to_string(),
-        tier: "empire".to_string(),
+        tier: CountryTier::Empire,
         religion: None,
         capital: Some("STATE_HOME_COUNTIES".to_string())
       });

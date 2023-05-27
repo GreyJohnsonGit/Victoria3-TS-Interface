@@ -17,7 +17,7 @@ pub trait IFileLoader {
 pub struct FileLoader<'a> {
   config: &'a Box<dyn IConfig>,
   builder_factory: &'a Box<dyn IBuilderFactory>,
-  mod_state: Option<Box<dyn IModState>>
+  mod_state: Option<Box<dyn IModState>>,
 }
 
 impl FileLoader<'_> {

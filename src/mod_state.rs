@@ -5,14 +5,13 @@ type CountryDefinitionTable = HashMap<String, Vec<Box<dyn ICountryDefinition>>>;
 type CultureTable = HashMap<String, Vec<Box<dyn ICulture>>>;
 
 pub trait IModState {
-  fn get_country_definitions(&self) -> &CountryDefinitionTable;
-  fn get_cultures(&self) -> &CultureTable;
-  
+  fn get_country_definition_files(&self) -> &CountryDefinitionTable;
   fn set_country_definitions_file(&mut self, 
     file_name: String, 
     definitions: Vec<Box<dyn ICountryDefinition>>
   );
   
+  fn get_culture_files(&self) -> &CultureTable;
   fn set_cultures_file(&mut self, 
     file_name: String, 
     cultures: Vec<Box<dyn ICulture>>
@@ -34,11 +33,11 @@ impl ModState {
 }
 
 impl IModState for ModState {
-  fn get_country_definitions(&self) -> &CountryDefinitionTable {
+  fn get_country_definition_files(&self) -> &CountryDefinitionTable {
     return &self.country_definitions;
   }
   
-  fn get_cultures(&self) -> &CultureTable {
+  fn get_culture_files(&self) -> &CultureTable {
     return &self.cultures;
   }
   
