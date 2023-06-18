@@ -1,10 +1,8 @@
 use crate::config::IConfig;
-use crate::country_definition::country_definition::ICountryDefinition;
-use crate::culture::culture::Culture;
 use crate::logger::{ILogger, LogLevel};
 use crate::mod_builder::ModBuilder;
 use crate::mod_state::{IModState, ModState};
-use crate::pdx_parser::IPdxParser;
+use crate::parser_factory::IParserFactory;
 use std::fs;
 use std::path::Path;
 
@@ -28,21 +26,21 @@ pub trait IFileLoader {
 pub struct FileLoader<'a> {
   config: &'a Box<dyn IConfig>,
   mod_state: Option<Box<dyn IModState>>,
-  parser: &'a Box<dyn IPdxParser<Box<dyn ICountryDefinition>>>,
+  parser_factory: Box<dyn IParserFactory>,
   logger: Box<dyn ILogger>,
 }
 
 impl FileLoader<'_> {
   pub fn new<'a>(
     config: &'a Box<dyn IConfig>,
-    parser: &'a Box<dyn IPdxParser<Box<dyn ICountryDefinition>>>,
+    parser_factory: Box<dyn IParserFactory>,
     logger: &'a Box<dyn ILogger>
   ) -> FileLoader<'a> {
     let mod_state: Box<dyn IModState> = Box::from(ModState::new());
     return FileLoader { 
       config,
       mod_state: Some(mod_state),
-      parser,
+      parser_factory,
       logger: logger.clone_boxed()
     }
   }
@@ -50,13 +48,9 @@ impl FileLoader<'_> {
   fn load_country_definitions(&mut self, path_string: String) -> Result<(), ()> {
     let path = Path::new(&path_string).join("common\\country_definitions");
     let directory = match fs::read_dir(path.clone()) {
-      Err(_) => {
-        self.logger.log(LogLevel::Warning, 
-          &format!("No Country Definitions found in {}", path.display())
-        );
-        return Ok(());
-      },
       Ok(files) => files,
+      Err(_) => return self.logger
+        .no_entity_found("Country Definitions", path.display()),
     };
     
     for entry in directory {
@@ -65,13 +59,12 @@ impl FileLoader<'_> {
         let file_text = fs::read_to_string(file_path.clone())
           .unwrap_or(String::new());
         
-        let definitions = self.parser.parse(&file_text);
+        let parser = self.parser_factory.create_country_definition_parser();
+        let definitions = parser.parse(&file_text);
         
         let definitions = match definitions {
           Err(_) => {
-            self.logger.log(LogLevel::Warning, 
-              &format!("Failed to parse `{}`", path.display())
-            );
+            self.logger.failed_to_parse(path.display()).ok();
             continue;
           },
           Ok(d) => d,
@@ -97,12 +90,8 @@ impl FileLoader<'_> {
     let path = Path::new(&path_string).join("common\\cultures");
     
     let directory = match fs::read_dir(path.clone()) {
-      Err(_) => {
-        self.logger.log(LogLevel::Warning, 
-          &format!("No Cultures found in {}", path.display())
-        );
-        return Ok(());
-      },
+      Err(_) => return self.logger
+        .no_entity_found("Cultures", path.display()),
       Ok(files) => files,
     };
     
@@ -112,15 +101,10 @@ impl FileLoader<'_> {
         let file_text = fs::read_to_string(file_path.clone())
         .unwrap_or(String::new());
         
-        let cultures = Culture::from_pdx(
-          file_text, 
-        );
-        
-        let cultures = match cultures {
-          Err(e) => {
-            self.logger.log(LogLevel::Warning, 
-              &format!("{} @ {}", e, path.display())
-            );
+        let parser = self.parser_factory.create_culture_parser();
+        let cultures = match parser.parse(&file_text) {
+          Err(_) => {
+            self.logger.failed_to_parse(path.display()).ok();
             continue;
           },
           Ok(d) => d,

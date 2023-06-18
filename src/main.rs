@@ -1,10 +1,11 @@
 use vicky::country_definition::pdx_parser::CountryDefinitionBuilder;
+use vicky::culture::pdx_parser::CultureBuilder;
 use vicky::file_loader::{FileLoader, IFileLoader};
 use vicky::config::Config;
 use vicky::logger::Logger;
 use vicky::mod_builder::IModBuilder;
 use vicky::mod_validator::mod_validator::ModValidator;
-use vicky::pdx_parser::PdxParser;
+use vicky::parser_factory::ParserFactory;
 
 fn main() {
   let logger = Logger::new_boxed();
@@ -17,9 +18,11 @@ fn main() {
     ".\\cache".to_string()
   );
   
-  let builder_template = CountryDefinitionBuilder::new_boxed(&logger);
-  let parser = PdxParser::new_boxed(&builder_template);
-  let mut filer_loader = FileLoader::new(&config, &parser, &logger);
+  let parser_factory = ParserFactory::new_boxed(
+    CultureBuilder::new_boxed(&logger),
+    CountryDefinitionBuilder::new_boxed(&logger)
+  );
+  let mut filer_loader = FileLoader::new(&config, parser_factory, &logger);
 
   let load_result = Ok(())
     .and(filer_loader.load_vanilla())

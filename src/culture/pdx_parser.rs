@@ -1,4 +1,12 @@
-use crate::{color::Color, logger::ILogger, value_reader_ext::IValueReaderExt, pdx_builder::IPdxBuilder, default_reader::DefaultReader, unwrap_or_logger::{UnwrapOrLogger}, define_applier};
+use crate::{
+  color::Color, 
+  logger::ILogger, 
+  value_reader_ext::IValueReaderExt, 
+  pdx_builder::IPdxBuilder, 
+  default_reader::DefaultReader, 
+  unwrap_or_logger::UnwrapOrLogger, 
+  define_applier
+};
 use super::culture::{ICulture, self, Culture};
 
 const STRING_ID: &str = "string_id";
@@ -59,32 +67,10 @@ impl CultureBuilder {
   }
 }
 
+
 impl IPdxBuilder<Box<dyn ICulture>> 
 for CultureBuilder 
 {
-  fn apply_root(&mut self, root: &str) {
-    self.string_id = Some(root.to_string());
-  }
-  
-  fn apply(&mut self, token: &str, value: &DefaultReader) -> Result<(), ()> {
-    match token {
-      STRING_ID => self.apply_string_id(value),
-      COLOR => self.apply_color(value),
-      RELIGION => self.apply_religion(value),
-      TRAITS => self.apply_traits(value),
-      MALE_COMMON_FIRST_NAMES => self.apply_male_common(value),
-      FEMALE_COMMON_FIRST_NAMES => self.apply_female_common(value),
-      COMMON_LAST_NAMES => self.apply_common_last(value),
-      NOBLE_LAST_NAMES => self.apply_noble_last(value),
-      MALE_REGAL_FIRST_NAMES => self.apply_male_regal(value),
-      FEMALE_REGAL_FIRST_NAMES => self.apply_female_regal(value),
-      REGAL_LAST_NAMES => self.apply_regal_last(value),
-      ETHNICITIES => self.apply_ethnicities(value),
-      GRAPHICS => self.apply_graphics(value),
-      _ => Err(())
-    }
-  }
-
   fn build(&self) -> Result<Box<dyn ICulture>, ()> {
     let unwrap_or_logger = UnwrapOrLogger::new(&self.logger, culture::TYPE_STR);
 
@@ -112,8 +98,31 @@ for CultureBuilder
         self.noble_last_names.clone(), 
         self.male_regal_first_names.clone(), 
         self.female_regal_first_names.clone(), 
-        self.regal_last_names.clone()
+        self.regal_last_names.clone(),
       )),
+      _ => Err(())
+    }
+  }
+  
+  fn apply_root(&mut self, root: &str) {
+    self.string_id = Some(root.to_string());
+  }
+  
+  fn apply(&mut self, token: &str, value: &DefaultReader) -> Result<(), ()> {
+    match token {
+      STRING_ID => self.apply_string_id(value),
+      COLOR => self.apply_color(value),
+      RELIGION => self.apply_religion(value),
+      TRAITS => self.apply_traits(value),
+      MALE_COMMON_FIRST_NAMES => self.apply_male_common(value),
+      FEMALE_COMMON_FIRST_NAMES => self.apply_female_common(value),
+      COMMON_LAST_NAMES => self.apply_common_last(value),
+      NOBLE_LAST_NAMES => self.apply_noble_last(value),
+      MALE_REGAL_FIRST_NAMES => self.apply_male_regal(value),
+      FEMALE_REGAL_FIRST_NAMES => self.apply_female_regal(value),
+      REGAL_LAST_NAMES => self.apply_regal_last(value),
+      ETHNICITIES => self.apply_ethnicities(value),
+      GRAPHICS => self.apply_graphics(value),
       _ => Err(())
     }
   }
@@ -128,22 +137,13 @@ impl CultureBuilder {
   define_applier!(apply_color, read_color, color, COLOR, "Color");
   define_applier!(apply_religion, read_string, religion, RELIGION, "String");
   define_applier!(apply_traits, read_string_array, traits, TRAITS, "Vec<String>");
-  define_applier!(apply_male_common, read_string_array, 
-    male_common_first_names, MALE_COMMON_FIRST_NAMES, "Vec<String>");
-  define_applier!(apply_female_common, read_string_array,
-    female_common_first_names, FEMALE_COMMON_FIRST_NAMES, "Vec<String>");
-  define_applier!(apply_common_last, read_string_array,
-    common_last_names, COMMON_LAST_NAMES, "Vec<String>");
-  define_applier!(apply_noble_last, read_string_array,
-    noble_last_names, NOBLE_LAST_NAMES, "Vec<String>");
-  define_applier!(apply_male_regal, read_string_array,
-    male_regal_first_names, MALE_REGAL_FIRST_NAMES, "Vec<String>");
-  define_applier!(apply_female_regal, read_string_array,
-    female_regal_first_names, FEMALE_REGAL_FIRST_NAMES, "Vec<String>");
-  define_applier!(apply_regal_last, read_string_array,
-    regal_last_names, REGAL_LAST_NAMES, "Vec<String>");
-  define_applier!(apply_ethnicities, read_string_array,
-    ethnicities, ETHNICITIES, "Vec<String>");
-  define_applier!(apply_graphics, read_string,
-    graphics, GRAPHICS, "String");
+  define_applier!(apply_male_common, read_string_array, male_common_first_names, MALE_COMMON_FIRST_NAMES, "Vec<String>");
+  define_applier!(apply_female_common, read_string_array, female_common_first_names, FEMALE_COMMON_FIRST_NAMES, "Vec<String>");
+  define_applier!(apply_common_last, read_string_array, common_last_names, COMMON_LAST_NAMES, "Vec<String>");
+  define_applier!(apply_noble_last, read_string_array, noble_last_names, NOBLE_LAST_NAMES, "Vec<String>");
+  define_applier!(apply_male_regal, read_string_array, male_regal_first_names, MALE_REGAL_FIRST_NAMES, "Vec<String>");
+  define_applier!(apply_female_regal, read_string_array, female_regal_first_names, FEMALE_REGAL_FIRST_NAMES, "Vec<String>");
+  define_applier!(apply_regal_last, read_string_array, regal_last_names, REGAL_LAST_NAMES, "Vec<String>");
+  define_applier!(apply_ethnicities, read_string_array, ethnicities, ETHNICITIES, "Vec<String>");
+  define_applier!(apply_graphics, read_string, graphics, GRAPHICS, "String");
 }

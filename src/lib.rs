@@ -16,3 +16,4 @@ pub mod pdx_builder;
 pub mod default_reader;
 pub mod error_messages;
 pub mod unwrap_or_logger;
+pub mod parser_factory;
