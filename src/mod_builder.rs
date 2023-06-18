@@ -1,35 +1,37 @@
 use std::{path::Path, fs, ops::Not};
-use crate::{config::IConfig, mod_state::IModState, mod_validator::mod_validator::IModValidator};
+use crate::{config::IConfig, mod_state::IModState, mod_validator::mod_validator::IModValidator, logger::{ILogger, LogLevel}, to_pdx::IToPdx};
 
 pub trait IModBuilder {
-  fn validate(&self, validator: Box<dyn IModValidator>) -> Result<(), String>;
+  fn validate_with(&self, validator: Box<dyn IModValidator>) -> Result<(), ()>;
   fn save(&self) -> Result<bool, String>;
 }
 
 pub struct ModBuilder {
+  logger: Box<dyn ILogger>,
   config: Box<dyn IConfig>,
   mod_state: Box<dyn IModState>
 }
 
 impl ModBuilder {
   pub fn new(
-    config: Box<dyn IConfig>, 
+    logger: Box<dyn ILogger>,
+    config: Box<dyn IConfig>,
     mod_state: Box<dyn IModState>,
   ) -> ModBuilder {
-    ModBuilder { config, mod_state }
+    ModBuilder { 
+      config, 
+      mod_state,
+      logger
+    }
   }
 }
 
 impl IModBuilder for ModBuilder {
-  fn validate(&self, validator: Box<dyn IModValidator>) -> Result<(), String> {
-    println!("Validating mod files...");
+  fn validate_with(&self, validator: Box<dyn IModValidator>) -> Result<(), ()> {
+    self.logger.log_str(LogLevel::Info, "Validating mod files...");
     
-    Ok(())
-      .and(validator.cultures_are_defined(&self.mod_state))
+    validator.cultures_are_defined(&self.mod_state)
       .and(validator.no_duplicate_tags(&self.mod_state))
-      .map_err(|errors| {
-        format!("{}", errors.join("\n"))
-      })
   }
   
   fn save(&self) -> Result<bool, String> {
@@ -45,35 +47,38 @@ impl IModBuilder for ModBuilder {
       return Err(format!("Mod path {} does not exist and could not be created! Error: {}", mod_path.display(), error));
     }
 
-    println!("Saving `Country Definition` files"); {
+    self.logger.log(LogLevel::Info, &format!(
+      "Saving Mod @ {}", mod_path.display()
+    ));
+
+    {
       let country_definition_path = mod_path.join("common\\country_definitions");
       fs::create_dir_all(&country_definition_path).ok();
       for (file_name, definitions) in self.mod_state.get_country_definition_files() {
         let file_path = country_definition_path.join(file_name);
         let contents = definitions
           .iter()
-          .map(|definition| definition.as_pdx())
+          .map(|definition| definition.to_pdx())
           .collect::<Vec<String>>()
           .join("\n\n");
         fs::write(file_path, contents).ok();
       }
     }
 
-    println!("Saving `Culture` files"); {
+    {
       let culture_path = mod_path.join("common\\cultures");
       fs::create_dir_all(&culture_path).ok();
       for (file_name, cultures) in self.mod_state.get_culture_files() {
         let file_path = culture_path.join(file_name);
         let contents = cultures
           .iter()
-          .map(|culture| culture.as_pdx())
+          .map(|culture| culture.to_pdx())
           .collect::<Vec<String>>()
           .join("\n\n");
         fs::write(file_path, contents).ok();
       }
     }
 
-    println!("Saving mod files to {}...", mod_path_string);
     return Ok(true);
   }
 }

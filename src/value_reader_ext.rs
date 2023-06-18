@@ -6,7 +6,7 @@ pub trait IValueReaderExt {
   /// Reads a color from a value reader.
   /// 
   /// @note This function will read the following formats:
-  ///  - { Scalar, Scalar, Scalar }
+  /// - { Scalar, Scalar, Scalar }
   /// - { "hsv", { Scalar, Scalar, Scalar } }
   /// - { "hsv360", { Scalar, Scalar, Scalar } }
   /// - { "rgb", { Scalar, Scalar, Scalar } }

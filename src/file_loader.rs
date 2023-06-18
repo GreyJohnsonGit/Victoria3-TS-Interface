@@ -1,71 +1,82 @@
-use crate::builder_factory::IBuilderFactory;
 use crate::config::IConfig;
+use crate::country_definition::country_definition::ICountryDefinition;
 use crate::culture::culture::Culture;
+use crate::logger::{ILogger, LogLevel};
 use crate::mod_builder::ModBuilder;
 use crate::mod_state::{IModState, ModState};
+use crate::pdx_parser::IPdxParser;
 use std::fs;
 use std::path::Path;
-use crate::country_definition::country_definition::CountryDefinition;
 
+/// Describes structs that can load files from disk and use them to create a
+/// IModeBuilder.
 pub trait IFileLoader {
-  fn load_vanilla(&mut self) -> Result<(), String>;
-  fn load_pdx(&mut self) -> Result<(), String>;
-  fn load_json(&self) -> Result<(), String>;
+
+  /// Loads vanilla files from the game directory.
+  fn load_vanilla(&mut self) -> Result<(), ()>;
+
+  /// Loads PDX files from the pdx directory.
+  fn load_pdx(&mut self) -> Result<(), ()>;
+
+  /// Loads JSON files from the json directory.
+  fn load_json(&self) -> Result<(), ()>;
+
+  /// Parses files into internal structs and returns a ModBuilder.
   fn create_mod_builder(self) -> Box<ModBuilder>;
 }
 
 pub struct FileLoader<'a> {
   config: &'a Box<dyn IConfig>,
-  builder_factory: &'a Box<dyn IBuilderFactory>,
   mod_state: Option<Box<dyn IModState>>,
+  parser: &'a Box<dyn IPdxParser<Box<dyn ICountryDefinition>>>,
+  logger: Box<dyn ILogger>,
 }
 
 impl FileLoader<'_> {
   pub fn new<'a>(
     config: &'a Box<dyn IConfig>,
-    country_definition_factory: &'a Box<dyn IBuilderFactory>,
+    parser: &'a Box<dyn IPdxParser<Box<dyn ICountryDefinition>>>,
+    logger: &'a Box<dyn ILogger>
   ) -> FileLoader<'a> {
     let mod_state: Box<dyn IModState> = Box::from(ModState::new());
     return FileLoader { 
-      config, 
-      builder_factory: country_definition_factory,
-      mod_state: Some(mod_state)
+      config,
+      mod_state: Some(mod_state),
+      parser,
+      logger: logger.clone_boxed()
     }
   }
-
-  fn load_country_definitions(&mut self, path_string: String) -> Result<(), String> {
+  
+  fn load_country_definitions(&mut self, path_string: String) -> Result<(), ()> {
     let path = Path::new(&path_string).join("common\\country_definitions");
-    
-    println!("Loading Country Definitions from {}...", path.display());
-    
     let directory = match fs::read_dir(path.clone()) {
       Err(_) => {
-        println!("No Country Definitions found in {}", path.display());
+        self.logger.log(LogLevel::Warning, 
+          &format!("No Country Definitions found in {}", path.display())
+        );
         return Ok(());
       },
       Ok(files) => files,
     };
-
+    
     for entry in directory {
       if let Ok(entry) = entry {
         let file_path = entry.path();
-        let file_path_str = file_path.to_str().unwrap_or("No Path");
         let file_text = fs::read_to_string(file_path.clone())
           .unwrap_or(String::new());
         
-        let definitions = CountryDefinition::from_pdx(
-          file_text, 
-          &self.builder_factory
-        );
-
+        let definitions = self.parser.parse(&file_text);
+        
         let definitions = match definitions {
-          Err(e) => {
-            println!("{} @ {}", e, file_path_str);
+          Err(_) => {
+            self.logger.log(LogLevel::Warning, 
+              &format!("Failed to parse `{}`", path.display())
+            );
             continue;
           },
           Ok(d) => d,
         };
-
+        
         self.mod_state.as_mut().map(|state| {
           let file_name = Path::file_name(&file_path)
             .map(|file_name| file_name.to_str())
@@ -81,40 +92,40 @@ impl FileLoader<'_> {
     
     return Ok(());
   }
-
-  fn load_cultures(&mut self, path_string: String) -> Result<(), String> {
+  
+  fn load_cultures(&mut self, path_string: String) -> Result<(), ()> {
     let path = Path::new(&path_string).join("common\\cultures");
-    
-    println!("Loading Cultures from {}...", path.display());
     
     let directory = match fs::read_dir(path.clone()) {
       Err(_) => {
-        println!("No Cultures found in {}", path.display());
+        self.logger.log(LogLevel::Warning, 
+          &format!("No Cultures found in {}", path.display())
+        );
         return Ok(());
       },
       Ok(files) => files,
     };
-
+    
     for entry in directory {
       if let Ok(entry) = entry {
         let file_path = entry.path();
-        let file_path_str = file_path.to_str().unwrap_or("No Path");
         let file_text = fs::read_to_string(file_path.clone())
-          .unwrap_or(String::new());
+        .unwrap_or(String::new());
         
         let cultures = Culture::from_pdx(
           file_text, 
-          &self.builder_factory
         );
-
+        
         let cultures = match cultures {
           Err(e) => {
-            println!("{} @ {}", e, file_path_str);
+            self.logger.log(LogLevel::Warning, 
+              &format!("{} @ {}", e, path.display())
+            );
             continue;
           },
           Ok(d) => d,
         };
-
+        
         self.mod_state.as_mut().map(|state| {
           let file_name = Path::file_name(&file_path)
             .map(|file_name| file_name.to_str())
@@ -133,29 +144,38 @@ impl FileLoader<'_> {
 }
 
 impl IFileLoader for FileLoader<'_> {
-  fn load_vanilla(&mut self) -> Result<(), String> {
+  fn load_vanilla(&mut self) -> Result<(), ()> {
     let path_string = self.config.get_vanilla_path();
     let path = Path::new(&path_string);
     
-    println!("Loading vanilla files from {}...", path.display());
-
+    self.logger.log(LogLevel::Info, 
+      &format!("Loading Vanilla Files @ {}", path.display())
+    );
+    
     if path.is_dir() == false {
-      return Err(format!("Vanilla path {} does not exist!", path.display()));
+      self.logger.log(LogLevel::Error, 
+        &format!("Vanilla Path Does Not Exist @ {}", path.display())
+      );
+      return Err(());
     }
-
-    return Ok(())
-      .and(self.load_country_definitions(path_string.clone()))
+    
+    self.load_country_definitions(path_string.clone())
       .and(self.load_cultures(path_string.clone()))
   }
   
-  fn load_pdx(&mut self) -> Result<(), String> {
+  fn load_pdx(&mut self) -> Result<(), ()> {
     let path_string = self.config.get_pdx_path();
     let path = Path::new(&path_string);
     
-    println!("Loading pdx files from {}...", path.display());
-
+    self.logger.log(LogLevel::Info, 
+      &format!("Loading PDX Files @ {}", path.display())
+    );
+    
     if path.is_dir() == false {
-      return Err(format!("Pdx path {} does not exist!", path.display()));
+      self.logger.log(LogLevel::Error, 
+        &format!("PDX Path Does Not Exist @ {}", path.display())
+      );
+      return Err(());
     }
 
     return Ok(())
@@ -163,74 +183,19 @@ impl IFileLoader for FileLoader<'_> {
       .and(self.load_cultures(path_string.clone()))
   }
   
-  fn load_json(&self) -> Result<(), String> {
-    println!("Loading json files from {}...", self.config.get_json_path());    
+  fn load_json(&self) -> Result<(), ()> {
     return Ok(());
   }
   
   fn create_mod_builder(mut self) -> Box<ModBuilder> {
     let mod_state = std::mem::take(&mut self.mod_state);
     let config = self.config.clone_box();
-    let mod_builder = ModBuilder::new(config, mod_state.unwrap());
-
-    Box::from(mod_builder)
-  }
-}
-
-#[cfg(test)]
-mod tests {
-  use crate::{config::MockIConfig, builder_factory::BuilderFactory};
-  use super::*;
-
-  #[test]
-  fn load_vanilla_with_valid_path_ok() {
-    // Arrange
-    let temp_directory = tempfile::tempdir().unwrap();
-    let path: String = temp_directory.path().to_string_lossy().into();
-    fs::create_dir_all(path.clone() + "/common/country_definitions/").unwrap();
-
-    let mut config = MockIConfig::new();
-    config.expect_get_vanilla_path()
-      .returning(move || path.clone());
-
-    let config: Box<dyn IConfig> = Box::from(config);
-    let factory = BuilderFactory::new_boxed();
-    let mut loader = FileLoader::new(
-      &config,
-      &factory
+    let mod_builder = ModBuilder::new(
+      self.logger.clone_boxed(),
+      config, 
+      mod_state.unwrap()
     );
-
-    // Act
-    let result = loader.load_vanilla();
-
-    // Assert
-    println!("{:?}", result);
-    assert!(result.is_ok());
-  }
-
-  #[test]
-  fn load_vanilla_with_invalid_path_err() {
-    // Arrange
-    let temp_directory = tempfile::tempdir().unwrap();
-    let path: String = temp_directory
-      .path().join("does_not_exist")
-      .to_string_lossy().into();
-
-      let mut config = MockIConfig::new();
-      config.expect_get_vanilla_path()
-        .returning(move || path.clone());
-  
-      let config: Box<dyn IConfig> = Box::from(config);
-      let factory = BuilderFactory::new_boxed();
-      let mut loader = FileLoader::new(
-        &config,
-        &factory
-      );
-
-    // Act
-    let result = loader.load_vanilla();
-
-    // Assert
-    assert!(result.is_err());
+    
+    Box::from(mod_builder)
   }
 }

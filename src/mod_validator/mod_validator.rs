@@ -1,28 +1,37 @@
 use std::collections::HashSet;
-use crate::mod_state::IModState;
+use crate::{mod_state::IModState, logger::{ILogger, LogLevel}};
 
+/// Describes structs that can validate a mod.
+/// 
+/// @notes This trait aims to catch common errors. While catching all errors in
+/// advance would be great, we cannot ensure that.
 pub trait IModValidator {
-  fn cultures_are_defined(&self,
-    mod_state: &Box<dyn IModState>
-  ) -> Result<(), Vec<String>>;
-  
-  fn no_duplicate_tags(&self,
-    mod_state: &Box<dyn IModState>
-  ) -> Result<(), Vec<String>>;
+  /// Check that all references to cultures use a culture that is defined.
+  fn cultures_are_defined(&self, mod_state: &Box<dyn IModState>) -> Result<(), ()>;
+
+  /// Check that no country tag is used twice.
+  fn no_duplicate_tags(&self, mod_state: &Box<dyn IModState>) -> Result<(), ()>;
 }
 
-pub struct ModValidator {}
+pub struct ModValidator {
+  logger: Box<dyn ILogger>
+}
 
 impl ModValidator {
-  pub fn new() -> ModValidator { ModValidator {} }
+  pub fn new(logger: &Box<dyn ILogger>) -> ModValidator { 
+    ModValidator { logger: logger.clone_boxed() } 
+  }
+
+  pub fn new_boxed(logger: &Box<dyn ILogger>) -> Box<dyn IModValidator> {
+    Box::new(ModValidator::new(logger))
+  }
 }
 
 impl IModValidator for ModValidator {
   fn cultures_are_defined(&self, 
     mod_state: &Box<dyn IModState>
-  ) -> Result<(), Vec<String>> {
-    let mut errors = Vec::<String>::new();
-    
+  ) -> Result<(), ()> {
+    let mut error_flag = false;
     let culture_files = mod_state.get_culture_files();
     let country_definition_files = mod_state.get_country_definition_files();
     
@@ -37,23 +46,25 @@ impl IModValidator for ModValidator {
       for definition in country_definitions {
         for culture in definition.cultures() {
           if !culture_string_id_lookup.contains(&culture) {
-            errors.push(format!("Culture `{}` is Undefined! @ {}", culture, file_name))
+            error_flag = true;
+            self.logger.log(LogLevel::Error, &format!(
+              "Culture `{}` is Undefined! @ {}", culture, file_name
+            ));
           }
         }
       }
     }
-    
-    match errors.len() {
-      0 => Ok(()),
-      _ => Err(errors)
+
+    match error_flag {
+      true => Err(()),
+      false => Ok(())
     }
   }
   
   fn no_duplicate_tags(&self,
     mod_state: &Box<dyn IModState>
-  ) -> Result<(), Vec<String>> {
-    let mut errors = Vec::<String>::new();
-
+  ) -> Result<(), ()> {
+    let mut error_flag = false;
     let country_definition_files = mod_state.get_country_definition_files();
 
     let mut tag_lookup = HashSet::new();
@@ -61,16 +72,19 @@ impl IModValidator for ModValidator {
       for definition in definitions {
         let tag = definition.tag();
         if tag_lookup.contains(&tag) {
-          errors.push(format!("Duplicate Tag `{}`! @ {}", tag, file_name));
+          error_flag = true;
+          self.logger.log(LogLevel::Error, &format!(
+            "Duplicate Tag `{}` @ {}", tag, file_name
+          ));
         } else {
           tag_lookup.insert(tag);
         }
       }
     }
 
-    match errors.len() {
-      0 => Ok(()),
-      _ => Err(errors)
+    match error_flag {
+      true => Err(()),
+      false => Ok(())
     }
   }
 }

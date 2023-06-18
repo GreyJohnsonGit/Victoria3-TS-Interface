@@ -28,19 +28,19 @@ pub trait ICultureBuilder {
 
 #[derive(Debug)]
 pub struct CultureBuilder {
-  pub string_id: Option<String>,
-  pub color: Option<Color>,
-  pub religion: Option<String>,
-  pub traits: Option<Vec<String>>,
-  pub male_common_first_names: Option<Vec<String>>,
-  pub female_common_first_names: Option<Vec<String>>,
-  pub common_last_names: Option<Vec<String>>,
-  pub noble_last_names: Option<Vec<String>>,
-  pub male_regal_first_names: Option<Vec<String>>,
-  pub female_regal_first_names: Option<Vec<String>>,
-  pub regal_last_names: Option<Vec<String>>,
-  pub ethnicities: Option<Vec<String>>,
-  pub graphics: Option<String>,
+  string_id: Option<String>,
+  traits: Option<Vec<String>>,
+  ethnicities: Option<Vec<String>>,
+  graphics: Option<String>,
+  color: Option<Color>,
+  religion: Option<String>,
+  male_common_first_names: Option<Vec<String>>,
+  female_common_first_names: Option<Vec<String>>,
+  common_last_names: Option<Vec<String>>,
+  noble_last_names: Option<Vec<String>>,
+  male_regal_first_names: Option<Vec<String>>,
+  female_regal_first_names: Option<Vec<String>>,
+  regal_last_names: Option<Vec<String>>,
 }
 
 impl CultureBuilder {
