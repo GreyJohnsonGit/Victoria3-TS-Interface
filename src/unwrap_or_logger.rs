@@ -16,7 +16,7 @@ impl UnwrapOrLogger {
   pub fn new(logger: &Box<dyn ILogger>, type_str: &'static str) -> Self {
     Self {
       type_str,
-      logger: logger.clone_boxed(),
+      logger: logger.create_new(),
 
       str: build_unwrap_or_log::<String>(&logger, type_str),
       color: build_unwrap_or_log::<Color>(&logger, type_str),
@@ -37,7 +37,7 @@ fn build_unwrap_or_log<'a, T: Clone>(
   logger: &Box<dyn ILogger>,
   type_str: &'static str
 ) -> UnwrapOrLogFunction<T> {
-  let logger = logger.clone_boxed();
+  let logger = logger.create_new();
   Box::new(move |property, value| {
     match value {
       Some(v) => Ok(v.clone()),

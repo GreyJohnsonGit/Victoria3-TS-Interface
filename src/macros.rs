@@ -19,7 +19,7 @@ macro_rules! define_get_and_set {
 #[macro_export]
 macro_rules! define_applier {
     ($method:ident, $read_method:ident, $property:ident, $property_name:tt, $property_type:tt) => {
-      fn $method(&mut self, value: &DefaultReader) -> Result<(), ()> {
+      fn $method(&mut self, value: &DefaultValueReader) -> Result<(), ()> {
         value.$read_method()
           .map(|value| self.$property = Some(value))
           .map_err(|_| { let _ = self.logger.coerce_error($property_name, $property_type); })

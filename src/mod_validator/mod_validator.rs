@@ -19,7 +19,7 @@ pub struct ModValidator {
 
 impl ModValidator {
   pub fn new(logger: &Box<dyn ILogger>) -> ModValidator { 
-    ModValidator { logger: logger.clone_boxed() } 
+    ModValidator { logger: logger.create_new() } 
   }
 
   pub fn new_boxed(logger: &Box<dyn ILogger>) -> Box<dyn IModValidator> {

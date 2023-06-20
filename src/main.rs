@@ -6,6 +6,7 @@ use vicky::logger::Logger;
 use vicky::mod_builder::IModBuilder;
 use vicky::mod_validator::mod_validator::ModValidator;
 use vicky::parser_factory::ParserFactory;
+use vicky::state::pdx_parser::StateBuilder;
 
 fn main() {
   let logger = Logger::new_boxed();
@@ -17,24 +18,26 @@ fn main() {
     ".\\mod".to_string(),
     ".\\cache".to_string()
   );
+
   
   let parser_factory = ParserFactory::new_boxed(
     CultureBuilder::new_boxed(&logger),
-    CountryDefinitionBuilder::new_boxed(&logger)
+    CountryDefinitionBuilder::new_boxed(&logger),
+    StateBuilder::new_boxed(&logger)
   );
-  let mut filer_loader = FileLoader::new(&config, parser_factory, &logger);
+  let mut file_loader = FileLoader::new(&config, parser_factory, &logger);
 
   let load_result = Ok(())
-    .and(filer_loader.load_vanilla())
-    .and(filer_loader.load_pdx())
-    .and(filer_loader.load_json());
+    .and(file_loader.load_vanilla())
+    .and(file_loader.load_pdx())
+    .and(file_loader.load_json());
   
   if load_result.is_err() {
     logger.fatal_str("Failed to load files.");
     return;
   }
 
-  let mod_builder = filer_loader.create_mod_builder();
+  let mod_builder = file_loader.create_mod_builder();
   
   let mod_validator = ModValidator::new_boxed(&logger);
   match mod_builder.validate_with(mod_validator) {

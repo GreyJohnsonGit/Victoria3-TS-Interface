@@ -29,7 +29,7 @@ pub trait ILogger {
   fn log_array(&self, level: LogLevel, messages: &Vec<String>);
   
   /// Create a copy of the current logger.
-  fn clone_boxed(&self) -> Box<dyn ILogger>;
+  fn create_new(&self) -> Box<dyn ILogger>;
 
   /// Log message at Debug level.
   fn debug(&self, message: &String) {
@@ -143,7 +143,7 @@ impl ILogger for Logger {
     }
   }
   
-  fn clone_boxed(&self) -> Box<dyn ILogger> {
+  fn create_new(&self) -> Box<dyn ILogger> {
     Box::from(Clone::clone(self as &Logger))
   }
 }

@@ -79,6 +79,21 @@ impl IModBuilder for ModBuilder {
       }
     }
 
+    {
+      let states_path = mod_path.join("common\\history\\states");
+      fs::create_dir_all(&states_path).ok();
+      for (file_name, states) in self.mod_state.get_state_files() {
+        let file_path = states_path.join(file_name);
+        let contents = states
+          .iter()
+          .map(|state| state.to_pdx())
+          .collect::<Vec<String>>()
+          .join("\n\n");
+        let contents = format!("STATES = {{\n{}\n}}", contents);
+        fs::write(file_path, contents).ok();
+      }
+    }
+
     return Ok(true);
   }
 }

@@ -1,4 +1,4 @@
-use crate::{color::Color, country_tier::CountryTier, logger::ILogger, value_reader_ext::IValueReaderExt, pdx_builder::IPdxBuilder, default_reader::DefaultReader};
+use crate::{color::Color, country_tier::CountryTier, logger::ILogger, value_reader_ext::IValueReaderExt, pdx_builder::IPdxBuilder, default_reader::DefaultValueReader};
 use super::country_definition::{ICountryDefinition, CountryDefinition, self};
 
 pub struct CountryDefinitionBuilder {
@@ -29,7 +29,7 @@ impl CountryDefinitionBuilder {
   }
 
   pub fn new_boxed(logger: &Box<dyn ILogger>) -> Box<dyn IPdxBuilder<Box<dyn ICountryDefinition>>> {
-    Box::new(CountryDefinitionBuilder::new(logger.clone_boxed()))
+    Box::new(CountryDefinitionBuilder::new(logger.create_new()))
   }
 }
 
@@ -40,7 +40,7 @@ for CountryDefinitionBuilder
     self.tag = Some(root.to_string());
   }
   
-  fn apply(&mut self, token: &str, value: &DefaultReader) -> Result<(), ()> {
+  fn apply(&mut self, token: &str, value: &DefaultValueReader) -> Result<(), ()> {
     match token {
       "country_type" => self.apply_country_type(value),
       "tier" => self.apply_tier(value),
@@ -52,7 +52,7 @@ for CountryDefinitionBuilder
     }
   }
 
-  fn build(&self) -> Result<Box<dyn ICountryDefinition>, ()> {
+  fn build(self: Box<Self>) -> Result<Box<dyn ICountryDefinition>, ()> {
     let mut is_missing_property = false;
 
     let tag = self.unwrap_or_set_flag(
@@ -93,7 +93,7 @@ for CountryDefinitionBuilder
   }
 
   fn create_new(&self) -> Box<dyn IPdxBuilder<Box<dyn ICountryDefinition>>> {
-    CountryDefinitionBuilder::new_boxed(&self.logger.clone_boxed())
+    CountryDefinitionBuilder::new_boxed(&self.logger.create_new())
   }
 }
 
@@ -113,19 +113,19 @@ impl CountryDefinitionBuilder {
     }
   }
 
-  fn apply_country_type(&mut self, value: &DefaultReader) -> Result<(), ()> {
+  fn apply_country_type(&mut self, value: &DefaultValueReader) -> Result<(), ()> {
     value.read_string()
       .map(|value| self.country_type = Some(value))
       .map_err(|_| { let _ = self.logger.coerce_error("country_type", "String"); })
   }
   
-  fn apply_cultures(&mut self, value: &DefaultReader) -> Result<(), ()> {
+  fn apply_cultures(&mut self, value: &DefaultValueReader) -> Result<(), ()> {
     value.read_string_array()
       .map(|value| self.cultures = Some(value))
       .map_err(|_| { let _ = self.logger.coerce_error("cultures", "Vec<String>"); })
   }
   
-  fn apply_tier(&mut self, value: &DefaultReader) -> Result<(), ()> {
+  fn apply_tier(&mut self, value: &DefaultValueReader) -> Result<(), ()> {
     let tier = match value.read_string() {
       Ok(value) => value,
       Err(_) => return self.logger.coerce_error("country_tier", "String")
@@ -136,19 +136,19 @@ impl CountryDefinitionBuilder {
       .map_err(|_| { let _ = self.logger.coerce_error(&tier, "CountryTier"); })
   }
   
-  fn apply_color(&mut self, value: &DefaultReader) -> Result<(), ()> {
+  fn apply_color(&mut self, value: &DefaultValueReader) -> Result<(), ()> {
     value.read_color()
       .map(|value| self.color = Some(value))
       .map_err(|_| { let _ = self.logger.coerce_error("color", "Color"); })
   }
   
-  fn apply_religion(&mut self, value: &DefaultReader) -> Result<(), ()> {
+  fn apply_religion(&mut self, value: &DefaultValueReader) -> Result<(), ()> {
     value.read_string()
       .map(|value| self.religion = Some(value))
       .map_err(|_| { let _ = self.logger.coerce_error("religion", "String"); })
   }
   
-  fn apply_capital(&mut self, value: &DefaultReader) -> Result<(), ()> {
+  fn apply_capital(&mut self, value: &DefaultValueReader) -> Result<(), ()> {
     value.read_string()
       .map(|value| self.capital = Some(value))
       .map_err(|_| { let _ = self.logger.coerce_error("capital", "String"); })

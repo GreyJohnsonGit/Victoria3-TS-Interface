@@ -3,7 +3,7 @@ use crate::{
   logger::ILogger, 
   value_reader_ext::IValueReaderExt, 
   pdx_builder::IPdxBuilder, 
-  default_reader::DefaultReader, 
+  default_reader::DefaultValueReader, 
   unwrap_or_logger::UnwrapOrLogger, 
   define_applier
 };
@@ -58,7 +58,7 @@ impl CultureBuilder {
       ethnicities: None,
       graphics: None,
 
-      logger: logger.clone_boxed()
+      logger: logger.create_new()
     }
   }
 
@@ -71,7 +71,7 @@ impl CultureBuilder {
 impl IPdxBuilder<Box<dyn ICulture>> 
 for CultureBuilder 
 {
-  fn build(&self) -> Result<Box<dyn ICulture>, ()> {
+  fn build(self: Box<Self>) -> Result<Box<dyn ICulture>, ()> {
     let unwrap_or_logger = UnwrapOrLogger::new(&self.logger, culture::TYPE_STR);
 
     match (
@@ -108,7 +108,7 @@ for CultureBuilder
     self.string_id = Some(root.to_string());
   }
   
-  fn apply(&mut self, token: &str, value: &DefaultReader) -> Result<(), ()> {
+  fn apply(&mut self, token: &str, value: &DefaultValueReader) -> Result<(), ()> {
     match token {
       STRING_ID => self.apply_string_id(value),
       COLOR => self.apply_color(value),
